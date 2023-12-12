@@ -31,14 +31,14 @@ public class UserData_POST extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		out.print ("<!DOCTYPE html>"
 				+ "<html>"
-				+ "<head>"
-				+ "<meta charset=\"UTF-8\">"
-				+ "<title>User 정보</title>"
-				+ "</head>"
-				+ "<body>"
-				+ "<h1> 낚이지 마세요~~~</h1>"
-				+ "<div> 이름 : " + name + ", ID : " + id + ",  PW : " + pw + "</div>"
-				+ "</body>"
+					+ "<head>"
+						+ "<meta charset=\"UTF-8\">"
+						+ "<title>User 정보</title>"
+					+ "</head>"
+					+ "<body>"
+						+ "<h1> 낚이지 마세요~~~</h1>"
+						+ "<div> 이름 : " + name + ", ID : " + id + ",  PW : " + pw + "</div>"
+					+ "</body>"
 				+ "</html>");	
 		
 		out.flush();

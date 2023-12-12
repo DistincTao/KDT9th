@@ -33,14 +33,13 @@ public class HelloServlet_GET extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		out.print("<!DOCTYPE html>\r\n"
 				+ "<html lang=\"KO\">\r\n"
-				+ "<head>\r\n"
-				+ "<meta charset=\"UTF-8\">\r\n"
-				+ "<title>이름을 찍어보자</title>"
-				+ "</head>"
-				+ "<body>"
-				+ "<h1>" + name
-				+ "</h1>"
-				+ "</body>"
+					+ "<head>\r\n"
+						+ "<meta charset=\"UTF-8\">\r\n"
+						+ "<title>이름을 찍어보자</title>"
+					+ "</head>"
+					+ "<body>"
+						+ "<h1>" + name + "</h1>"
+					+ "</body>"
 				+ "</html>"
 				);
 		
