@@ -21,16 +21,19 @@ public class sendRedirect extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String userId = request.getParameter("userId");
 		String userPw = request.getParameter("userPw");
+		
+		PrintWriter out = response.getWriter();
+		
 		//id = asdf | pw = 1234
 		if (userId.equals("asdf") && userPw.equals("1234")) {
 			request.setAttribute("userId", userId);
 			request.setAttribute("userPw", userPw);
-			PrintWriter out = response.getWriter();
+
 			out.print("<script> alert(" + userId + "님 로그인 성공!!) </script>") ;
 			// 로그인 성공
-
+			response.sendRedirect("./mainTest.jsp?status=loginSuccess"); // 자바코드 우선 실행
 		}
-		response.sendRedirect("./mainTest.jsp?status=loginSuccess");
+
 	}
 
 }

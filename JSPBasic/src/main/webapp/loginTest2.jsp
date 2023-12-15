@@ -7,6 +7,7 @@
 <title>로그인 1</title>
 </head>
 <body>
+	<div>세션 아이디 : <%= session.getId() %></div>
 	<form action="./sessionLogin.do" method="POST">
 	<div>아이디 : <input type="text" name="userId" value="asdf"></div>
 	<div>비 번 : <input type="password" name="userPw" value="1234"></div>

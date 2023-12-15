@@ -11,11 +11,11 @@ import javax.servlet.http.HttpSession;
 
 
 @WebServlet("/sessionLogin.do")
-public class SessionLoginServlet extends HttpServlet {
+public class SessionLoginServlet2 extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 
-    public SessionLoginServlet() {
+    public SessionLoginServlet2() {
         super();
 
     }
@@ -32,6 +32,7 @@ public class SessionLoginServlet extends HttpServlet {
 			System.out.println("세션 id : " + sess.getId());
 			
 			sess.setAttribute("loginMemberId", userId);
+			sess.setAttribute("loginMemberPwd", userPw);
 			
 			response.sendRedirect("./mainTest.jsp?status=loginSuccess");
 		}
