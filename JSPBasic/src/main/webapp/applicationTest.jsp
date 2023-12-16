@@ -14,7 +14,7 @@
 		maps.put("galaxy", new ProductDTO("23S", "사파이어블루", 3, 1000000));
 	
 		application.setAttribute("phones", maps);
-	%>
+	%> 
 	<div><a href="appPage.jsp">appPage.jsp로 이동</a></div>
 </body>
 </html>

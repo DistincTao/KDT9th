@@ -17,8 +17,8 @@
 	application.setAttribute("name", "application data");
 	
 	// 각 내장 객체의 영역에 바인딩 된 정보 확인
-// 	request.getRequestDispatcher("./scope_Page2.jsp").forward(request, response);
-	response.sendRedirect("./scope_Page2.jsp");
+	request.getRequestDispatcher("./scope_Page2.jsp").forward(request, response);
+// 	response.sendRedirect("./scope_Page2.jsp");
 	%>
 	
 	<div><%= pageContext.getAttribute("name") %></div>
