@@ -11,6 +11,46 @@ public class MemberDTO {
 	private int age;
 	private String gender;
 	private String hobby;
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public void setPsw1(String psw1) {
+		this.psw1 = psw1;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public void setbDate(Date bDate) {
+		this.bDate = bDate;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public void setHobby(String hobby) {
+		this.hobby = hobby;
+	}
+
+	public void setJob(String job) {
+		this.job = job;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
+
 	private String job;
 	private String memo;
 	
