@@ -1,5 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8" import="java.util.Enumeration"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
 <!DOCTYPE html>
 <html lang="KO">
 <head>
@@ -35,7 +40,7 @@ onload = function (){
 }
 </script>
 <% 
-// 자바로 자바스크립트에 alert 창 우기
+// 자바로 자바스크립트에 alert 창 띄우기
 if (request.getQueryString() != null && request.getParameter("status").equals("loginSuccess")){
 	String query = request.getParameter("status");
 	out.print("<script> alert('login 성공!!!'); </script>");
@@ -85,19 +90,25 @@ if (request.getQueryString() != null && request.getParameter("status").equals("l
 
 
 	<h1>mainTest.jsp</h1>
-	<div>
-		<a href="./loginTest1.jsp">로그인 1</a>
-	</div>
-	<br>
-	<div>
-		<a href="./loginTest2.jsp">로그인 2 (w/ session)</a>
-	</div>
-	
-	<div><a href="./hello.jsp">hello.jsp로 이동</a></div>
-	<br>
-	<form action="./sessionLogout.do" method="get">
-		<input type="submit" value="로그아웃">
-	</form>
+	<c:choose>
+		<c:when test="${sessionScope.loginMemberId == null}">
+		<div>
+			<a href="./loginTest1.jsp">로그인 1</a>
+		</div>
+		<br>
+		<div>
+			<a href="./loginTest2.jsp">로그인 2 (w/ session)</a>
+		</div>
+		
+		<div><a href="./hello.jsp">hello.jsp로 이동</a></div>
+		<br>
+		</c:when>
+		<c:otherwise>
+		<form action="./sessionLogout.do" method="get">
+			<input type="submit" value="로그아웃">
+		</form>
+		</c:otherwise>
+	</c:choose>
 	<div><a href="./checkSession.jsp">이동</a></div>
 </body>
 </html>

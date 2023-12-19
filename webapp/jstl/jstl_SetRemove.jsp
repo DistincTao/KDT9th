@@ -5,20 +5,28 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>로그인 1</title>
+<title>JSTL Core set remove out </title>
 </head>
 <body>
-	<div>세션 아이디 : <%= session.getId() %></div>
-	<form action="./sessionLogin.do" method="POST">
-	<div>아이디 : <input type="text" name="userId" value="asdf"></div>
-	<div>비 번 : <input type="password" name="userPw" value="1234"></div>
-	<input type="submit" value="로그인">
-	<input type="reset" value="초기화">
-	
-	</form>
+<%
+	pageContext.setAttribute("msg", "Hello");
+%>
+<c:set var="msg2" value="JSTL"/>
+<div>${pageScope.msg }</div>
+<div>${msg }</div>
+<div>${pageScope.msg2 }</div>
+<div>${msg2 }</div>
+
+<div><c:out value='${msg }'></c:out></div>
+<div><c:out value="오늘 점심도 춥겠구나"></c:out></div>
+
+<c:remove var="msg2"/>
+<div>${pageScope.msg2 }</div>
+<div><c:out value='${msg2 }'></c:out></div>
 </body>
 </html>
