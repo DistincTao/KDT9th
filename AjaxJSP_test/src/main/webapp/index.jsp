@@ -11,16 +11,12 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-	rel="stylesheet" />
-<script
-	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script type="text/javascript" src="js/AjaxJSP_test.js"></script>
 <style>
-.maintain {
+.modify {
 	height: 48px;
 	width: 48px;
 }
@@ -59,10 +55,10 @@
 
 				<!-- Modal body -->
 				<div class="modal-body">
-					<form action="">
+					<form action="insertEmployee.do" method="post">
 						<div class="input-group input-group-sm mb-3">
 							<span class="input-group-text">First_name</span>
-							 <input type="text"class="form-control" id="writeFirstName" name="first_name">
+							<input type="text"class="form-control" id="writeFirstName" name="first_name">
 						</div>
 						<div class="input-group input-group-sm mb-3">
 							<span class="input-group-text">Last_name</span>
@@ -74,26 +70,32 @@
 						</div>
 						<div class="input-group input-group-sm mb-3">
 							<span class="input-group-text">Phone Number</span>
-							 <input type="text" class="form-control" id="writePhoneNumber" name="phone_number">
+							<input type="text" class="form-control" id="writePhoneNumber" name="phone_number">
 						</div>
 						<div class="input-group input-group-sm mb-3">
 							<span class="input-group-text">Hire Date</span>
-							 <input type="date" class="form-control" id="writeHireDate" name="hire_date">
+							<input type="date" class="form-control" id="writeHireDate" name="hire_date">
+						</div>
+						<div class="input-group input-group-sm mb-3">
+							<span class="input-group-text">Department</span> 
+							<select class="form-select form-select-sm mt-3" id="writeDepartmentName" name="department_id">
+						    	
+						   	</select> 
 						</div>
 						<div class="input-group input-group-sm mb-3">
 							<span class="input-group-text">job position</span>
-							<select class="form-select form-select-sm mt-3" id="writeJobId" name="job_id">
+							<select class="form-select form-select-sm mt-3" id="writeJobId" name="job_id" >
 	
 						   	</select> 
 						</div>
 						<div class="input-group input-group-sm mb-3">
 						    <label for="writeSalary" class="form-label">Salary </label>
-   							<input type="range" class="form-range" id="writeSalary" min="100" max="30000" step="100" name="salary">
-    						<div id="salval"></div>
+   							<input type="range" class="form-range" id="writeSalary" step="10" name="salary">
+    						<div id="salval" >$0</div>
 						</div>
 						<div class="input-group input-group-sm mb-3">
 							<span class="input-group-text">Commition</span>
-							 <input type="number" class="form-control" min="0" max="0.99" step="0.01" id="commition" name="commition_pct"> 
+							<input type="number" class="form-control" min="0" max="0.99" step="0.01" id="commition" name="commition_pct" value="0.0"> 
 						</div>
 						<div class="input-group input-group-sm mb-3">
 							<span class="input-group-text">Manager</span>
@@ -101,20 +103,16 @@
 			
 						   	</select> 
 						</div>
-						<div class="input-group input-group-sm mb-3">
-							<span class="input-group-text">Department</span> 
-							<select class="form-select form-select-sm mt-3" id="writeDepartmentName" name="department_name">
-						    	
-						   	</select> 
+						<!-- Modal footer -->
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Send</button>
+							<button type="button" class="btn btn-danger modalClose" data-bs-dismiss="modal">Close</button>
 						</div>
 					</form>
 				</div>
 
-				<!-- Modal footer -->
-				<div class="modal-footer">
-					<button type="button" class="btn btn-danger modalClose"
-						data-bs-dismiss="modal">Close</button>
-				</div>
+
+
 
 			</div>
 		</div>

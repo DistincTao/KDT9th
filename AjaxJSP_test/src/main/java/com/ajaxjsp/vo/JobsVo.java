@@ -1,6 +1,7 @@
 package com.ajaxjsp.vo;
 
 public class JobsVo {
+	
 	private String job_id;
 	private String job_title;
 	private int min_salary;
@@ -8,7 +9,6 @@ public class JobsVo {
 	
 	public JobsVo() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public JobsVo(String job_id, String job_title, int min_salary, int max_salary) {

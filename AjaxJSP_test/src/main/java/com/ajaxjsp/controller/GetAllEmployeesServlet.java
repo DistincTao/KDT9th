@@ -22,15 +22,12 @@ import com.ajaxjsp.dao.EmployeesDaoImpl;
 import com.ajaxjsp.etc.OutputJsonForError;
 import com.ajaxjsp.vo.EmployeeVo;
 
-
 @WebServlet("/getAllEmployees.do")
 public class GetAllEmployeesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-
     public GetAllEmployeesServlet() {
         super();
-
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -74,7 +71,7 @@ public class GetAllEmployeesServlet extends HttpServlet {
 			for (EmployeeVo vo : list) {
 				JSONObject emp = new JSONObject();
 				emp.put("employee_id", vo.getEmployee_id() + "");
-				emp.put("fisrt_name", vo.getFisrt_name());
+				emp.put("first_name", vo.getFirst_name());
 				emp.put("last_name", vo.getLast_name());
 				emp.put("email", vo.getEmail());
 				emp.put("phone_number", vo.getPhone_number());

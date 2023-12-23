@@ -9,9 +9,11 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
+import com.ajaxjsp.dto.EmployeeDto;
 import com.ajaxjsp.vo.DepartmentVo;
 import com.ajaxjsp.vo.EmployeeVo;
 import com.ajaxjsp.vo.JobsVo;
+
 
 
 
@@ -111,8 +113,66 @@ public class EmployeesDaoImpl implements EmployeesDao {
 		return deptList;
 	}
 
+	@Override
+	public void insertEmployee(int empId, EmployeeDto dto) throws SQLException, NamingException {
+		Connection con = DBConnection.dbConnect();
+		PreparedStatement pstmt = null;
+		
+		if (con != null) {
+			String query = " insert into employees values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			pstmt = con.prepareStatement(query);
+			pstmt.setInt(1, empId);
+			pstmt.setString(2, dto.getFirst_name());
+			pstmt.setString(3, dto.getLast_name());
+			pstmt.setString(4, dto.getEmail());
+			pstmt.setString(5, dto.getPhone_number());
+			pstmt.setDate(6, dto.getHire_date());
+			pstmt.setString(7, dto.getJob_id());
+			pstmt.setDouble(8, dto.getSalary());
+			pstmt.setDouble(9, dto.getCommition_pct());
+			pstmt.setInt(10, dto.getManager_id());
+			pstmt.setInt(11, dto.getDepartment_id());
+			pstmt.executeUpdate();
+			
+		}
+		DBConnection.dbClose(pstmt, con);
+	}
 	
+	@Override
+	public int getNextEmpId() throws SQLException, NamingException {
+		int empId = 0;
+		Connection con = DBConnection.dbConnect();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		if (con != null) {
+			String query = "SELECT MAX(EMPLOYEE_ID) AS MAX_NO FROM EMPLOYEES";
+			pstmt = con.prepareStatement(query);
+			rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				empId = rs.getInt("MAX_NO") + 1;
+			}
+			
+		}
+		
+		return empId;
+	}
 
-	
+	@Override
+	public void deleteEmployee(int empId) throws SQLException, NamingException {
+		Connection con = DBConnection.dbConnect();
+		PreparedStatement pstmt = null;
+		
+		if (con != null) {
+			String query = "DELETE from EMPLOYEES where employee_id = ?";
+			pstmt = con.prepareStatement(query);
+			pstmt.setInt(1,empId);
+			pstmt.executeUpdate();
+			
+		}
+		DBConnection.dbClose(pstmt, con);
+		
+	}
 	
 }

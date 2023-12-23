@@ -30,7 +30,7 @@ public class GetDeptDataServlet extends HttpServlet {
         super();
     }
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("GetDetpSelectionServlet 서블릿 테스트");
 		response.setContentType("application/json; charset=utf-8");
 		EmployeesDao dao = EmployeesDaoImpl.getInstance();

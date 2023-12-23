@@ -1,8 +1,8 @@
-package com.ajaxjsp.vo;
+package com.ajaxjsp.dto;
 
 import java.sql.Date;
 
-public class EmployeeVo {
+public class EmployeeDto {
 	
 	private int employee_id;
 	private String first_name;
@@ -15,19 +15,17 @@ public class EmployeeVo {
 	private double commition_pct;
 	private int manager_id;
 	private int department_id;
-	private String department_name;
 	
 	
 	
-	public EmployeeVo() {
+	public EmployeeDto() {
 		super();
 	}
 
-	public EmployeeVo(int employee_id, String first_name, String last_name, String email, String phone_number,
+	public EmployeeDto(String first_name, String last_name, String email, String phone_number,
 			Date hire_date, String job_id, double salary, double commition_pct, int manager_id,
-			int department_id, String department_name) {
+			int department_id) {
 		super();
-		this.employee_id = employee_id;
 		this.first_name = first_name;
 		this.last_name = last_name;
 		this.email = email;
@@ -38,7 +36,6 @@ public class EmployeeVo {
 		this.commition_pct = commition_pct;
 		this.manager_id = manager_id;
 		this.department_id = department_id;
-		this.department_name = department_name;
 	}
 
 	public void setEmployee_id(int employee_id) {
@@ -85,10 +82,6 @@ public class EmployeeVo {
 		this.department_id = department_id;
 	}
 
-	public void setDepartment_name(String department_name) {
-		this.department_name = department_name;
-	}
-
 	public int getEmployee_id() {
 		return employee_id;
 	}
@@ -133,9 +126,6 @@ public class EmployeeVo {
 		return department_id;
 	}
 
-	public String getDepartment_name() {
-		return department_name;
-	}
 
 	@Override
 	public String toString() {
