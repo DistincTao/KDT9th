@@ -3,21 +3,13 @@ $(document).ready(function() {
 	getJobsData();
 	getDeptData();
 	
-	$(".modify").click(function(){
-		console.log("수정 페이지 모달 띄우기");
-	});
-	
-	$(".remove").click(function(){
-		alert("삭제");
-	});
+
 	
 	$(".writeIcon").click(function() {
 		//사원 입력 시 필요한 부가 정보 모달창 띄우기
 		$("#writeJobId").html(makeJobSelection());
-//		$("#writeManagerId").html(makeMgrSelection());
 		$("#writeDepartmentName").html(makeDeptSelection());
 		$("#writeModal").show();
-
 	});
 	
 	$(".modalClose").click(function() {
@@ -115,16 +107,14 @@ function outputEntireEmployees(json) {
 	output += "<th>입사일</th><th>직급</th><th>급여</th><th>커미션</th><th>관리자</th><th>부서명</th><th>수정</th><th>삭제</th>";
 	output += "</tr></thead><tbody>";
 	$.each(json.employees, function(i, item) {
-		output += "<tr><td>" + item.employee_id + "</td>";
-		output += "<td>" + item.first_name + " "
-				+ item.last_name + "</td>";
+		output += "<tr><td id='"+ item.employee_id + "'>" + item.employee_id + "</td>";
+		output += "<td>" + item.first_name + " " + item.last_name + "</td>";
 		output += "<td>" + item.email + "</td>";
 		output += "<td>" + item.phone_number + "</td>";
 		output += "<td>" + item.hire_date + "</td>";
 		output += "<td>" + item.job_id + "</td>";
-		output += "<td> $" + new Intl.NumberFormat('en-US').format(item.salary) + "</td>";
-		output += "<td>" + item.commition_pct * 100
-				+ "% </td>";
+		output += "<td> " + new Intl.NumberFormat('en-US').format(item.salary) + "</td>";
+		output += "<td>" + item.commition_pct * 100 + "% </td>";
 
 		let managerId = item.manager_id;
 		let managerName = "";
@@ -137,23 +127,35 @@ function outputEntireEmployees(json) {
 			
 	output += "<td>" + managerName + "</td>";
 	output += "<td>" + item.department_name + "</td>";
-	output += "<td><Image src='img/modify.png' class='modify'></td>";
-	output += "<td><Image src='img/remove.png' class='remove'></td></tr>";
+	output += "<td ><Image src='img/modify.png' class='modifyIcon'></td>";
+	output += "<td ><Image src='img/remove.png' class='removeIcon'></td></tr>";
 	
 	});
 	output += "</tbody></table>";
 
 	$(".empInfo").html(output);
 	
-	$(".modify").on("click", this, function(){
-		console.log("수정 페이지 모달 띄우기");
+	$(".modifyIcon").click(function(){
+		$("#modifyModal").show();
 	});
 	
-	$(".remove").on("click", this, function(){
-		console.log("삭제 페이지 확인 창 띄우기");
+	$(".modalClose").click(function() {
+		$("#modifyModal").hide();
 	});
+	
+	$(".removeIcon").on("click", this, function(){
+		$("#deleteEmp").attr("name", "empId")
+		$("#deleteEmp").attr("value", $(this).parent().parent().eq(0).children().eq(0).val());
+		$("#deleteModal").show();
+	});
+	
+	$(".modalClose").click(function() {
+		$("#deleteModal").hide();
+	});
+	
 }
 
+// 직급을 직업명으로 출력하여 입력 받기
 function makeJobSelection() {
 	let output = "<option>=== 직급을 입력하세요 ===</option>";
 	$.each(jobsData.jobs, function(i, item){
@@ -173,6 +175,7 @@ function makeJobSelection() {
 //	return output;
 //}
 
+// 부서  id를 부서명으로 출력 하여 입력 받기
 function makeDeptSelection() {
 	let output = "<option>=== 부서를 입력하세요 ===</option>";
 	$.each(deptData.departments, function(i, item){
@@ -182,15 +185,19 @@ function makeDeptSelection() {
 	return output;
 }
 
+// 직종 선택에 따른 급여 범위 설정 및 출력
 function makeSalaryRange() {
 	$.each(jobsData.jobs, function(i, item){
 		if ($("#writeJobId").val() == item.job_id) {
 			$("#writeSalary").attr('min', item.min_salary);
+			$("#salval-min").html("$" + new Intl.NumberFormat('en-US').format(item.min_salary));
 			$("#writeSalary").attr('max', item.max_salary);
+			$("#salval-max").html("$" + new Intl.NumberFormat('en-US').format(item.max_salary));
 		}
 	});
 }
 
+// 부서에 따라 담당 직원을 사수로 선택할 수 있도록 출력
 function makeMgrSelection() {
 	let output = "";
 	$.each(empData.employees, function(i, item){

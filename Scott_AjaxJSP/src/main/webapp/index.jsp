@@ -11,44 +11,94 @@
 <head>
 <meta charset="UTF-8">
 <title>Scott 계정 직원 목록</title>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script type="text/javascript" src="js/Scott_AjaxJSP.js"></script>
+<style>
+img {
+width : 48px;
+height : 48px;
+background-color : white;
+}
 
-<script>
-	$(document).ready(function(){
-		getEmps();
+#insertEmp {
+position: fixed;
+top : 20px;
+right : 20px;
+}
 
-	});
-
-	function getEmps() {
-		let url = "getAllEmp.do"
-		$.ajax({
-			url : url,
-			type : "post",
-			dataType : "json",
-			async : false,
-			success : function (data){
-				console.log(data);
-				outputList(data);
-			},
-			error : function(){},
-			complete : function () {},
-		});
-	}
-
-	function outputList(json){
-		$("#outputCnt").html("데이터 : " + json.count + "개");
-		$("#outputDate").html("출력 일시 : " + json.outputDate);
-	}
-</script>
-
+</style>
 </head>
 <body>
 	<h1>직원 목록 출력</h1>
 	<div id="outputCnt"></div>
 	<div id="outputDate"></div>
 	<div id="empData"></div>
+	<div><img src="img/insert.png" id="insertEmp"></div>
+	
+		<!-- 사원 입력 The Modal -->
+	<div class="modal" id="writeModal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">사원 정보 등록</h4>
+					<button type="button" class="btn-close modalClose"
+						data-bs-dismiss="modal"></button>
+				</div>
+				<!-- Modal body -->
+				<div class="modal-body">
+					<form action="insertEmp.do" method="post">
+						<div class="input-group input-group-sm mb-3">
+							<span class="input-group-text">Name</span>
+							<input type="text"class="form-control" id="writeName" name="name">
+						</div>
+						<div class="input-group input-group-sm mb-3">
+							<span class="input-group-text">Hire Date</span>
+							<input type="date" class="form-control" id="writeHireDate" name="hiredate">
+						</div>
+						<div class="input-group input-group-sm mb-3">
+							<span class="input-group-text">Department</span> 
+							<select class="form-select form-select-lg mt-3" id="writeDeptName" name="deptNo">
+						    	
+						   	</select> 
+						</div>
+						<div class="input-group input-group-sm mb-3">
+							<span class="input-group-text">Job</span>
+							<select class="form-select form-select-lg mt-3" id="writeJobId" name="job" required="required">
+								<option>PRESIDENT</option>
+								<option>MANAGER</option>
+								<option>ANALYST</option>
+								<option>SALESMAN</option>
+								<option>CLERK</option>
+						   	</select> 
+						</div>
+						<div class="input-group input-group-sm mb-3">
+						    <label for="writeSalary" class="form-label">Salary : </label><span id="salval" >$0</span>
+   							<input type="range" class="form-range" id="writeSal" min="100" max="5000" step="10" name="sal">
+						</div>
+						<div class="input-group input-group-sm mb-3">
+							<span class="input-group-text">Commition</span>
+							<input type="number" class="form-control" id="writeComm" name="comm" value="0.0"> 
+						</div>
+						<div class="input-group input-group-sm mb-3">
+							<span class="input-group-text">Manager</span>
+							<select class="form-select form-select-sm mt-3" id="writeMgrId" name="mgr">
+			
+						   	</select> 
+						</div>
+						<!-- Modal footer -->
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Send</button>
+							<button type="button" class="btn btn-danger modalClose" data-bs-dismiss="modal">Close</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 	
 </body>
 </html>

@@ -46,9 +46,9 @@ public class GetAllEmpServlet extends HttpServlet {
 			out.print(outputJson);
 			out.close();
 			
-			for (EmpVo vo : list) {
-				System.out.println(vo.toString());
-			}
+//			for (EmpVo vo : list) {
+//				System.out.println(vo.toString());
+//			}
 			
 		} catch (NamingException e) {
 			e.printStackTrace();
@@ -81,7 +81,7 @@ public class GetAllEmpServlet extends HttpServlet {
 				emp.put("SAL", vo.getSal() + "");
 				emp.put("COMM", vo.getComm() + "");
 				emp.put("DEPTNO", vo.getDeptno() + "");
-				emp.put("DEPTNO", vo.getDname());
+				emp.put("DNAME", vo.getDname());
 				
 				empArr.add(emp);
 			}

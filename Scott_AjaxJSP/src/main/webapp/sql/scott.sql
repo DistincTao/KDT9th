@@ -1,0 +1,1 @@
+SELECT MAX(empno) AS MAX_NO FROM EMP;

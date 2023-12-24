@@ -28,4 +28,9 @@ public class DBConnection {
 		stmt.close();
 		con.close();
 	}
+	
+	public static void closeConnection (Statement stmt, Connection con) throws SQLException {
+		stmt.close();
+		con.close();
+	}
 }
