@@ -11,3 +11,12 @@ SELECT distinct m.EMPLOYEE_ID as manager_id, m.FIRST_NAME, m.last_NAME, d.depart
  WHERE e.MANAGER_ID = m.EMPLOYEE_ID
    and d.department_Id = e.department_id
  order by d.department_id;
+ 
+ insert into employees
+ value (?, ?, ?, ?, ?, sysdate, ?, ?, ?, ?, ?); 
+ 
+ SELECT MAX(EMPLOYEE_ID) AS MAX_NO
+   FROM EMPLOYEES;
+   
+DELETE from EMPLOYEES
+ where employee_id = ?

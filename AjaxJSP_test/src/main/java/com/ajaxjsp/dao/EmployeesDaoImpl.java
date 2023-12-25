@@ -43,7 +43,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 		ResultSet rs = null;
 		
 		if (con != null) {
-			String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID";
+			String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID ORDER BY EMPLOYEE_ID DESC";
 			pstmt = con.prepareStatement(query);
 			rs = pstmt.executeQuery();
 

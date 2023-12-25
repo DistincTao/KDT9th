@@ -54,6 +54,34 @@ public class EmpDto {
 		return deptno;
 	}
 
+	public void setEname(String ename) {
+		this.ename = ename;
+	}
+
+	public void setJob(String job) {
+		this.job = job;
+	}
+
+	public void setMgr(int mgr) {
+		this.mgr = mgr;
+	}
+
+	public void setHiredate(Date hiredate) {
+		this.hiredate = hiredate;
+	}
+
+	public void setSal(double sal) {
+		this.sal = sal;
+	}
+
+	public void setComm(double comm) {
+		this.comm = comm;
+	}
+
+	public void setDeptno(int deptno) {
+		this.deptno = deptno;
+	}
+
 	@Override
 	public String toString() {
 		return "EmpDto [ename=" + ename + ", job=" + job + ", mgr=" + mgr + ", hiredate=" + hiredate + ", sal=" + sal

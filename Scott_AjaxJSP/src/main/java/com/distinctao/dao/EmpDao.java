@@ -17,4 +17,6 @@ public interface EmpDao {
 	public abstract void insertEmp(int empNo, EmpDto tdo) throws NamingException, SQLException;
 
 	public abstract int getEmpNo() throws NamingException, SQLException;
+	
+	public abstract void deleteEmp(int empNo) throws NamingException, SQLException;
 }

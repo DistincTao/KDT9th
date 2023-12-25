@@ -116,4 +116,19 @@ public class EmpDaoImpl implements EmpDao {
 		}
 		DBConnection.closeConnection(pstmt, con);
 	}
+
+	@Override
+	public void deleteEmp(int empNo) throws NamingException, SQLException {
+		Connection con = DBConnection.getConnection();
+		PreparedStatement pstmt = null;
+		
+		if (con != null) {
+			String query = "DELETE FROM EMP WHERE EMPNO = ?";
+			pstmt = con.prepareStatement(query);
+			pstmt.setInt(1, empNo);
+			pstmt.executeUpdate();
+			
+		}
+		DBConnection.closeConnection(pstmt, con);
+	}
 }
