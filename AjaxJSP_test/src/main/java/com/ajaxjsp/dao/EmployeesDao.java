@@ -17,6 +17,7 @@ public interface EmployeesDao {
 	public abstract List<EmployeeVo> selectAllEmployees() throws SQLException, NamingException;
 	public abstract List<JobsVo> selectAlljobs() throws SQLException, NamingException;
 	public abstract List<DepartmentVo> selectAllDepts() throws SQLException, NamingException;
+	public abstract String insertEmployee(EmployeeDto dto) throws SQLException, NamingException;
 	public abstract void insertEmployee(int empId, EmployeeDto dto) throws SQLException, NamingException;
 	public abstract int getNextEmpId() throws SQLException, NamingException;
 	public abstract void deleteEmployee(int empId) throws SQLException, NamingException;

@@ -64,6 +64,8 @@ public class GetDeptDataServlet extends HttpServlet {
 		
 
 			out.print(json.toJSONString());
+			
+			out.flush();
 			out.close();
 			
 		} catch (SQLException | NamingException e) {

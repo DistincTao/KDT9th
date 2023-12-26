@@ -1,5 +1,6 @@
 package com.ajaxjsp.dao;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,7 +36,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 	@Override
 	public List<EmployeeVo> selectAllEmployees() throws SQLException, NamingException {
 
-		System.out.println("DAO 출력");
+		System.out.println(getClass().getName() + " DAO ");
 		
 		Connection con = DBConnection.dbConnect();
 		PreparedStatement pstmt = null;
@@ -68,6 +69,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 
 	@Override
 	public List<JobsVo> selectAlljobs() throws SQLException, NamingException {
+		System.out.println(getClass().getName() + " DAO ");
 		Connection con = DBConnection.dbConnect();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -91,13 +93,14 @@ public class EmployeesDaoImpl implements EmployeesDao {
 
 	@Override
 	public List<DepartmentVo> selectAllDepts() throws SQLException, NamingException {
+		System.out.println(getClass().getName() + " DAO ");
 		Connection con = DBConnection.dbConnect();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		List<DepartmentVo> deptList = new ArrayList<>();
 		
 		if (con != null) {
-			String query = "SELECT * FROM DEPARTMENTS";
+			String query = "SELECT * FROM DEPARTMENTS ORDER BY DEPARTMENT_ID";
 			pstmt = con.prepareStatement(query);
 			rs = pstmt.executeQuery();
 
@@ -115,6 +118,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 
 	@Override
 	public void insertEmployee(int empId, EmployeeDto dto) throws SQLException, NamingException {
+		System.out.println(getClass().getName() + " DAO ");
 		Connection con = DBConnection.dbConnect();
 		PreparedStatement pstmt = null;
 		
@@ -132,6 +136,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 			pstmt.setDouble(9, dto.getCommition_pct());
 			pstmt.setInt(10, dto.getManager_id());
 			pstmt.setInt(11, dto.getDepartment_id());
+			
 			pstmt.executeUpdate();
 			
 		}
@@ -139,7 +144,41 @@ public class EmployeesDaoImpl implements EmployeesDao {
 	}
 	
 	@Override
+	public String insertEmployee(EmployeeDto dto) throws SQLException, NamingException {
+		System.out.println(getClass().getName() + " DAO ");
+		Connection con = DBConnection.dbConnect();
+		CallableStatement cstmt = null;
+		String result = null;
+		if (con != null) {
+			String query = " {CALL PROCEDURE_INSERT_EMP(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+			cstmt = con.prepareCall(query);
+			cstmt.setString(1, dto.getFirst_name());
+			cstmt.setString(2, dto.getLast_name());
+			cstmt.setString(3, dto.getEmail());
+			cstmt.setString(4, dto.getPhone_number());
+			cstmt.setDate(5, dto.getHire_date());
+			cstmt.setString(6, dto.getJob_id());
+			cstmt.setDouble(7, dto.getSalary());
+			cstmt.setDouble(8, dto.getCommition_pct());
+			cstmt.setInt(9, dto.getManager_id());
+			cstmt.setInt(10, dto.getDepartment_id());
+			cstmt.registerOutParameter(11, java.sql.Types.VARCHAR);
+			
+			cstmt.executeUpdate();
+			
+			// out 매게변수에서 반환되는 변수 받아오기
+			result = cstmt.getString(11);
+			
+			System.out.println(result);
+			
+		}
+		DBConnection.dbClose(cstmt, con);
+		return result;
+	}
+	
+	@Override
 	public int getNextEmpId() throws SQLException, NamingException {
+		System.out.println(getClass().getName() + " DAO ");
 		int empId = 0;
 		Connection con = DBConnection.dbConnect();
 		PreparedStatement pstmt = null;
@@ -161,6 +200,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 
 	@Override
 	public void deleteEmployee(int empId) throws SQLException, NamingException {
+		System.out.println(getClass().getName() + " DAO ");
 		Connection con = DBConnection.dbConnect();
 		PreparedStatement pstmt = null;
 		

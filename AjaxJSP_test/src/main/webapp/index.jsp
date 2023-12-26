@@ -36,6 +36,15 @@
 	justify-content: space-between;
 	width : 500px
 }
+
+.errMsg {
+	color : red;
+
+}
+#salval {
+	color : blue;
+	font-weight: bold;
+}
 </style>
 </head>
 <body>
@@ -63,7 +72,8 @@
 
 				<!-- Modal body -->
 				<div class="modal-body">
-					<form action="insertEmployee.do" method="post">
+<!-- 					<form action="insertEmployee.do" method="post"> -->
+					<form action="" method="post">
 						<div class="input-group input-group-sm mb-3">
 							<span class="input-group-text">First_name</span>
 							<input type="text"class="form-control" id="writeFirstName" name="first_name">
@@ -111,12 +121,14 @@
 			
 						   	</select> 
 						</div>
+					</form>
 						<!-- Modal footer -->
 						<div class="modal-footer">
-							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Send</button>
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="insertSubmit">Send</button>
+<!-- 							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal" id="insertSubmit">Send</button> -->
 							<button type="button" class="btn btn-danger modalClose" data-bs-dismiss="modal">Close</button>
 						</div>
-					</form>
+<!-- 					</form> -->
 				</div>
 			</div>
 		</div>
@@ -137,11 +149,12 @@
 				<div class="modal-body">		
 					<form action="">
 						<div> 선택하신 사원을 삭제하시겠습니까? </div>
-						<div id="empIdForDelete"></div>
-						<div id="nameForDelete"></div>
+<!-- 						<div id="empIdForDelete"></div> -->
+<!-- 						<div id="nameForDelete"></div> -->
 					<!-- Modal footer -->
 						<div class="modal-footer">
-							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">YES</button>
+<!-- 							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">YES</button> -->
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="deleteSubmit">YES</button>
 							<button type="button" class="btn btn-danger modalClose" data-bs-dismiss="modal">NO</button>
 						</div>				
 					</form>
@@ -198,7 +211,7 @@
 						   	</select> 
 						</div>
 						<div class="input-group input-group-sm mb-3">
-						    <label for="writeSalary" class="form-label">Salary : </label><span id="salval" >$0</span>
+						    <label for="writeSalary" class="form-label">Salary : </label><span id="salval" > $0</span>
    							<input type="range" class="form-range" id="writeSalary" step="10" name="salary">
     						<div class="salval"><div id="salval-min" >$0</div><div id="salval-max" >$0</div></div>
 						</div>
