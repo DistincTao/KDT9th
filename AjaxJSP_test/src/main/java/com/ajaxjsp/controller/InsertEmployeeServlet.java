@@ -51,6 +51,7 @@ public class InsertEmployeeServlet extends HttpServlet {
 		try {
 //			int empId = dao.getNextEmpId();
 //			dao.insertEmployee(empId, dto);
+			
 			String result = dao.insertEmployee(dto);
 			if (result.equals("SUCCESS")){
 				JSONObject json = new JSONObject();

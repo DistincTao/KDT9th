@@ -2,10 +2,7 @@ package com.ajaxjsp.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -15,50 +12,45 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
+import com.ajaxjsp.dao.EmployeesDao;
 import com.ajaxjsp.dao.EmployeesDaoImpl;
 import com.ajaxjsp.etc.JsonParsing;
 import com.ajaxjsp.etc.OutputJsonForError;
 import com.ajaxjsp.vo.EmployeeVo;
 
-@WebServlet("/getAllEmployees.do")
-public class GetAllEmployeesServlet extends HttpServlet {
+
+@WebServlet("/orderByEmp.do")
+public class OrderEmployeesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    public GetAllEmployeesServlet() {
+
+    public OrderEmployeesServlet() {
         super();
     }
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("GetAllEmployeesServlet 서블릿 테스트");
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("OrderEmployeesServlet 서블릿 테스트");
 		response.setContentType("application/json; charset=utf-8");
-		EmployeesDaoImpl dao = EmployeesDaoImpl.getInstance();
+		String orderMethod = request.getParameter("sortOrder");
+		
+		EmployeesDao dao = EmployeesDaoImpl.getInstance();
 		PrintWriter out = response.getWriter();
-		String empName = request.getParameter("seachName");
-		String sortOrder = request.getParameter("sortOrder");
 		
 		try {
-			List<EmployeeVo> list = dao.selectAllEmployees(empName, sortOrder);
-			// 출력 테스트 (dao 단에서 반환되어 왔는지)
-			
+			List<EmployeeVo> list = dao.empSortByOrder(orderMethod);
 			JsonParsing jsonData = new JsonParsing();
 			String strJson = jsonData.toJsonWithJsonSimple(list);
-//			System.out.println(outputJson);
-			
-
 			out.print(strJson);
+			out.flush();
 			out.close();
 			
-//			for (EmployeeVo vo : list) {
-//				System.out.println(vo.toString());
-//			}
-
 		} catch (SQLException | NamingException e) {
-			out.print(OutputJsonForError.outputJson(e));
+			OutputJsonForError.outputJson(e);
 			e.printStackTrace();
 		}
+		
+		
 	}
 
 }
