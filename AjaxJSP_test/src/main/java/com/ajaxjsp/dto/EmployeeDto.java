@@ -38,6 +38,22 @@ public class EmployeeDto {
 		this.department_id = department_id;
 	}
 
+	public EmployeeDto(int employee_id, String first_name, String last_name, String email, String phone_number,
+			Date hire_date, String job_id, double salary, double commition_pct, int manager_id, int department_id) {
+		super();
+		this.employee_id = employee_id;
+		this.first_name = first_name;
+		this.last_name = last_name;
+		this.email = email;
+		this.phone_number = phone_number;
+		this.hire_date = hire_date;
+		this.job_id = job_id;
+		this.salary = salary;
+		this.commition_pct = commition_pct;
+		this.manager_id = manager_id;
+		this.department_id = department_id;
+	}
+
 	public void setEmployee_id(int employee_id) {
 		this.employee_id = employee_id;
 	}

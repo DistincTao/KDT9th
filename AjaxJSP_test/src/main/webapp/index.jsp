@@ -30,7 +30,7 @@
 	top: 15px;
 }
 
-.salval{
+.salval, .modifySalval{
 	display : flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -132,7 +132,7 @@
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">Hire Date</span>
-								<input type="date" class="form-control" id="writeHireDate" name="hire_date" required="required">
+								<input type="date" class="form-control" id="writeHireDate" name="hire_date" required="required" readonly>
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">Department</span> 
@@ -187,23 +187,19 @@
 					</div>
 					<!-- Modal body  -->
 					<div class="modal-body">		
-						<form action="">
-							<div> 선택하신 사원을 삭제하시겠습니까? </div>
-	<!-- 						<div id="empIdForDelete"></div> -->
-	<!-- 						<div id="nameForDelete"></div> -->
-						<!-- Modal footer -->
-							<div class="modal-footer">
-	<!-- 							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">YES</button> -->
-								<button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="deleteSubmit">YES</button>
-								<button type="button" class="btn btn-danger modalClose" data-bs-dismiss="modal">NO</button>
-							</div>				
-						</form>
+							<div><span id="deleteEmpNo"></span>번 사원을 삭제하시겠습니까?</div> 
+					<!-- Modal footer -->
+						<div class="modal-footer">
+<!-- 							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">YES</button> -->
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="deleteSubmit">YES</button>
+							<button type="button" class="btn btn-danger modalClose" data-bs-dismiss="modal">NO</button>
+						</div>				
 					</div>
 				</div>
 			</div>
 		</div>
 	
-		<!-- 사원 입력 The Modal -->
+		<!-- 사원 수정 The Modal -->
 		<div class="modal" id="modifyModal">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -219,58 +215,62 @@
 					<div class="modal-body">
 						<form action="" method="post">
 							<div class="input-group input-group-sm mb-3">
+								<span class="input-group-text">Employee_ID</span>
+								<input type="text"class="form-control" id="modifyEmployeeId" readonly>
+							</div>
+							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">First_name</span>
-								<input type="text"class="form-control" id="writeFirstName" name="first_name">
+								<input type="text"class="form-control" id="modifyFirstName" name="first_name">
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">Last_name</span>
-								<input type="text"class="form-control" id="writeLastName" name="last_name" required="required">
+								<input type="text"class="form-control" id="modifyLastName" name="last_name" required="required">
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">Eamil</span>
-								<input type="email" class="form-control" id="writeEmail" name="email" required="required">
+								<input type="text" class="form-control" id="modifyEmail" name="email" required="required">
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">Phone Number</span>
-								<input type="text" class="form-control" id="writePhoneNumber" name="phone_number">
+								<input type="text" class="form-control" id="modifyPhoneNumber" name="phone_number">
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">Hire Date</span>
-								<input type="date" class="form-control" id="writeHireDate" name="hire_date" required="required">
+								<input type="date" class="form-control" id="modifyHireDate" name="hire_date" required="required">
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">Department</span> 
-								<select class="form-select form-select-lg mt-3" id="writeDepartmentName" name="department_id">
+								<select class="form-select form-select-lg mt-3" id="modifyDepartmentName" name="department_id">
 							    	
 							   	</select> 
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">job position</span>
-								<select class="form-select form-select-lg mt-3" id="writeJobId" name="job_id" required="required">
+								<select class="form-select form-select-lg mt-3" id="modifyJobId" name="job_id" required="required">
 		
 							   	</select> 
 							</div>
 							<div class="input-group input-group-sm mb-3">
-							    <label for="writeSalary" class="form-label">Salary : </label><span id="salval" > $0</span>
-	   							<input type="range" class="form-range" id="writeSalary" step="10" name="salary">
-	    						<div class="salval"><div id="salval-min" >$0</div><div id="salval-max" >$0</div></div>
+							    <label for="modifySalary" class="form-label">Salary : </label><span id="modifySalval" > $0</span>
+	   							<input type="range" class="form-range" id="modifySalary" step="10" name="salary">
+	    						<div class="modifySalval"><div id="modifySalval-min" >$0</div><div id="modifySalval-max" >$0</div></div>
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">Commition</span>
-								<input type="number" class="form-control" min="0" max="0.99" step="0.01" id="commition" name="commition_pct" value="0.0"> 
+								<input type="number" class="form-control" min="0" max="0.99" step="0.01" id="modifyCommition" name="commition_pct" value="0.0"> 
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">Manager</span>
-								<select class="form-select form-select-sm mt-3" id="writeManagerId" name="manager_id">
+								<select class="form-select form-select-sm mt-3" id="modifyManagerId" name="manager_id">
 				
 							   	</select> 
 							</div>
+						</form>
 							<!-- Modal footer -->
 							<div class="modal-footer">
-								<button type="submit" class="btn btn-primary" id="deleteEmp" data-bs-dismiss="modal">Send</button>
+								<button type="submit" class="btn btn-primary" id="modifyEmp" data-bs-dismiss="modal">Modify</button>
 								<button type="button" class="btn btn-danger modalClose" data-bs-dismiss="modal">Close</button>
 							</div>
-						</form>
 					</div>
 				</div>
 			</div>

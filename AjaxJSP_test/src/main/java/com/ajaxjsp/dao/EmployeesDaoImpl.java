@@ -41,32 +41,20 @@ public class EmployeesDaoImpl implements EmployeesDao {
 		PreparedStatement pstmt = null;
 		List<EmployeeVo> employeeList = new ArrayList<>();
 		ResultSet rs = null;
-		String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID ";
-		
-		System.out.println(name);
-		System.out.println(order);
-		if (name.equals("")) {
-			query += "";
-		} else {
-			query += "WHERE UPPER(FIRST_NAME) LIKE '%" + name.toUpperCase() + "%' OR UPPER(LAST_NAME) LIKE '%" + name.toUpperCase() + "%' ";
-		}
-		
-		if (order.equals("orderEmpAsc")) {
-			query += "E.EMPLOYEE_ID ASC";
-		} else if (order.equals("orderEmpDesc")) {
-			query += "E.EMPLOYEE_ID DESC";
-		} else if (order.equals("orderHireDateAsc")) {
-			query += "E.HIRE_DATE DESC";
-		} else if (order.equals("orderHireDateDesc")) {
-			query += "E.HIRE_DATE ASC";
-		} else if (order.equals("orderSalDesc")) {
-			query += "E.SALARY DESC";
-		} 
-		
-		System.out.println(query);
+		String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID WHERE QUITDATE = NULL ";
 		if (con != null) {
-			pstmt = con.prepareStatement(query);
-			rs = pstmt.executeQuery();
+			if (name == "" || name == null) {
+				query += "ORDER BY "+ order;
+				pstmt = con.prepareStatement(query);
+	
+			} else if (name != null || name != ""){
+				query += "AND LOWER(E.FIRST_NAME) LIKE ? OR LOWER(E.LAST_NAME) LIKE ? ORDER BY " + order;
+				pstmt = con.prepareStatement(query);
+				pstmt.setString(1, "%" + name + "%");
+				pstmt.setString(2, "%" + name + "%");
+			}
+		System.out.println(query);
+		rs = pstmt.executeQuery();
 
 			while (rs.next()) {
 				employeeList.add(new EmployeeVo(rs.getInt("EMPLOYEE_ID"), 
@@ -81,6 +69,41 @@ public class EmployeesDaoImpl implements EmployeesDao {
 												rs.getInt ("MANAGER_ID"),
 												rs.getInt ("DEPARTMENT_ID"), 
 												rs.getString ("DEPARTMENT_NAME")));
+			}
+			DBConnection.dbClose(rs, pstmt, con);
+		}
+		return employeeList;
+	}
+	
+	@Override
+	public List<EmployeeVo> selectAllEmployees() throws SQLException, NamingException {
+		
+		System.out.println(getClass().getName() + " DAO ");
+		
+		Connection con = DBConnection.dbConnect();
+		PreparedStatement pstmt = null;
+		List<EmployeeVo> employeeList = new ArrayList<>();
+		ResultSet rs = null;
+		String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID WHERE QUITDATE = NULL";
+		
+		System.out.println(query);
+		if (con != null) {
+			pstmt = con.prepareStatement(query);
+			rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				employeeList.add(new EmployeeVo(rs.getInt("EMPLOYEE_ID"), 
+						rs.getString("FIRST_NAME"), 
+						rs.getString("LAST_NAME"), 
+						rs.getString ("EMAIL"), 
+						rs.getString ("PHONE_NUMBER"),
+						rs.getDate ("HIRE_DATE"), 
+						rs.getString ("JOB_ID"), 
+						rs.getDouble ("SALARY"), 
+						rs.getDouble ("COMMISSION_PCT"), 
+						rs.getInt ("MANAGER_ID"),
+						rs.getInt ("DEPARTMENT_ID"), 
+						rs.getString ("DEPARTMENT_NAME")));
 			}
 			DBConnection.dbClose(rs, pstmt, con);
 		}
@@ -221,20 +244,22 @@ public class EmployeesDaoImpl implements EmployeesDao {
 	}
 
 	@Override
-	public void deleteEmployee(int empId) throws SQLException, NamingException {
+	public int deleteEmployee(int empId) throws SQLException, NamingException {
 		System.out.println(getClass().getName() + " DAO ");
 		Connection con = DBConnection.dbConnect();
 		PreparedStatement pstmt = null;
+		int result = 0;
 		
 		if (con != null) {
-			String query = "DELETE from EMPLOYEES where employee_id = ?";
+			String query = "UPDATE EMPLOYEES SET QUITDATE = SYSDATE WHERE EMPLOYEE_ID = ?";
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1,empId);
-			pstmt.executeUpdate();
+			result = pstmt.executeUpdate();
 			
 		}
 		DBConnection.dbClose(pstmt, con);
 		
+		return result;
 	}
 
 	@Override
@@ -372,6 +397,71 @@ public class EmployeesDaoImpl implements EmployeesDao {
 			DBConnection.dbClose(rs, pstmt, con);
 		}
 		return employeeList;
+	}
+
+	@Override
+	public EmployeeVo selectEmployeeByEmpId(int employee_id) throws SQLException, NamingException {
+		EmployeeVo employee = null;
+		Connection con = DBConnection.dbConnect();
+		String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID WHERE EMPLOYEE_ID = ?";
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		pstmt = con.prepareStatement(query);
+		pstmt.setInt(1, employee_id);
+		rs = pstmt.executeQuery();
+			
+		while (rs.next()) {
+			employee = new EmployeeVo(rs.getInt("EMPLOYEE_ID"), 
+									  rs.getString("FIRST_NAME"), 
+									  rs.getString("LAST_NAME"), 
+								      rs.getString ("EMAIL"), 
+									  rs.getString ("PHONE_NUMBER"),
+									  rs.getDate ("HIRE_DATE"), 
+									  rs.getString ("JOB_ID"), 
+									  rs.getDouble ("SALARY"), 
+									  rs.getDouble ("COMMISSION_PCT"), 
+									  rs.getInt ("MANAGER_ID"),
+									  rs.getInt ("DEPARTMENT_ID"), 
+									  rs.getString ("DEPARTMENT_NAME"));
+			}
+
+		return employee;
+		
+	}
+
+	@Override
+	public int modifyEmployee(EmployeeDto dto) throws SQLException, NamingException {
+		System.out.println(getClass().getName() + " DAO ");
+		Connection con = DBConnection.dbConnect();
+
+		int result = 0;
+
+		String query = "UPDATE EMPLOYEES SET FIRST_NAME = ?, LAST_NAME = ?, EMAIL = ?, PHONE_NUMBER = ?, HIRE_DATE = ?, JOB_ID = ?, SALARY = ?, COMMISSION_PCT = ?, MANAGER_ID = ?, DEPARTMENT_ID = ? WHERE EMPLOYEE_ID = ?";
+		
+		PreparedStatement pstmt = null;
+		
+		if (con != null) {
+			pstmt = con.prepareStatement(query);
+
+			pstmt.setString(1, dto.getFirst_name());
+			pstmt.setString(2, dto.getLast_name());
+			pstmt.setString(3, dto.getEmail());
+			pstmt.setString(4, dto.getPhone_number());
+			pstmt.setDate(5, dto.getHire_date());
+			pstmt.setString(6, dto.getJob_id());
+			pstmt.setDouble(7, dto.getSalary());
+			pstmt.setDouble(8, dto.getCommition_pct());
+			pstmt.setInt(9, dto.getManager_id());
+			pstmt.setInt(10, dto.getDepartment_id());
+			pstmt.setInt(11, dto.getEmployee_id());
+			
+			result = pstmt.executeUpdate();
+		
+		}
+		DBConnection.dbClose(pstmt, con);
+		return result;
+		
 	}
 	
 }

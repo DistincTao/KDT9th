@@ -1,7 +1,28 @@
 $(document).ready(function() {
-	getAllEmployees();
+//	getAllEmployees();
 	getJobsData();
 	getDeptData();
+	
+	
+	let empByName = $("#byName").val();
+	let orderMethod = "";
+	
+	getAllEmp (null, "orderEmpAsc");
+	// 사원 이름으로 검색
+	$("#byName").keyup(function(){
+		empByName = $(this).val();
+		if (empByName > 1) { // 검색어가 두글자 이상인 경우
+			getAllEmp (empByName, orderMethod);
+		}
+	});
+	
+	$(".orderMethod").change(function (){
+		orderMethod = $(".orderMethod:checked").val();
+		empByName = $("#byName").val();
+		getAllEmp (empByName, orderMethod);
+	});
+	
+	
 	
 	$(".writeIcon").click(function() {
 		//사원 입력 시 필요한 부가 정보 모달창 띄우기
@@ -12,41 +33,43 @@ $(document).ready(function() {
 	
 	$(".modalClose").click(function() {
 		$("#writeModal").hide();
+		$("#modifyModal").hide();
+		$("#deleteModal").hide();
 		
 	});
 	
 	// 급여 범위 가져오기
 	// 1) 내가 짠 코드
 	$("#writeJobId").change(function (){
-		makeSalaryRange();
+		makeSalaryRange(null);
 	});
 
+	$("#modifyJobId").change(function (){
+		makeSalaryRange("modify");
+	});
+	
 	// 지속적으로 입력시 중복 검사도 가능 
 	$("#byName").keyup(function(e){
 		if (e.keyCode == 13) {
 			// 엔터키를 눌렀을 때
 			if ($(this).val().length > 1){
-				let empByName = $("#byName").val();
-				let orderMethod = $(".orderMethod:checked").val();
 				searchByName(empByName, orderMethod);
 			}
 		}
 	});
 	
-		$(".orderMethod").click(function (){
-		let empByName = $(this).val();	
-		let orderMethod = $(".orderMethod:checked").val();
+	$(".orderMethod").change(function(e){
 		searchByName(empByName, orderMethod);
+
 	});
+	
+
 	
 
 //	// 지속적으로 입력시 중복 검사도 가능 
 //	$(".orderMethod").on("change", this, function(){
-//		if ($(this).val().length > 1){
-//			let empByName = $("#byName").val();
-//			console.log(empByName);
 //			let orderMethod = $(".orderMethod:checked").val();
-//			searchByName(empByName, orderMethod);
+//			searchByName(empByName);
 //		}
 //	});
 	
@@ -62,7 +85,11 @@ $(document).ready(function() {
 //	});
 	
 	$("#writeDepartmentName").change(function (){
-		$("#writeManagerId").html(makeMgrSelection());
+		$("#writeManagerId").html(makeMgrSelection(null));
+	});
+
+	$("#modifyDepartmentName").change(function (){
+		$("#modifyManagerId").html(makeMgrSelection("modify"));
 	});
 
 	// 사원 저장 버튼 클릭시 (Ajax로 통신하여 전송하기)
@@ -94,11 +121,76 @@ $(document).ready(function() {
 
 		inputEmpValidate(empTemp);
 
-		
 	});
+	
+		// 사원 수정 버튼 클릭시 (Ajax로 통신하여 전송하기)
+	$("#modifyEmp").click (function(){
+		let modifyEmployeeId = $("#modifyEmployeeId").val();
+		let modifyFirstName = $("#modifyFirstName").val();
+		let modifyLastName = $("#modifyLastName").val();
+		let modifyEmail = $("#modifyEmail").val().toUpperCase();
+		let modifyPhone = $("#modifyPhoneNumber").val();
+		let modifyHireDate = $("#modifyHireDate").val();
+		let modifyDepartmentName = $("#modifyDepartmentName").val();
+		let modifyJobId = $("#modifyJobId").val();
+		let modifySalary = Number($("#modifySalary").val());
+		let modifyCommition = Number($("#modifyCommition").val());
+		let modifyManagerId = $("#modifyManagerId").val();
+		
+		let empTemp = {
+			employee_id : modifyEmployeeId,
+			first_name : modifyFirstName, 
+			last_name : modifyLastName,
+			email : modifyEmail,
+			phone_number : modifyPhone,
+			hire_date : modifyHireDate,
+			job_id : modifyJobId,
+			salary : modifySalary,
+			commition_pct : modifyCommition,
+			manager_id : modifyManagerId,
+			department_id : modifyDepartmentName
+			}
+		console.log(empTemp);
+
+		modifyEmpValidate(empTemp);
+
+	});
+	
+	$("#deleteSubmit").click (function(){
+		let empNo = $(this).val();
+		console.log(empNo);
+		$.ajax({
+			url : 'deleteEmployee.do',
+			type : 'post',
+			data : {employee_id : empNo},
+			dataType : 'json',
+	//		async: false,
+			success : function(data) {
+				if (data.status == "fail") {
+					alert("정보가 수정되지 않았습니다.")
+				} else if (data.status == "success"){
+					console.log(data);
+					alert("삭제 완료");
+				}
+				$("#deleteModal").hide();
+				getAllEmployees();
+			},
+			error : function() {
+				alert("fail");
+			},
+			complete : function() {
+			}
+		});
+	});
+	
+	
 	
 	$("#writeSalary").change(function() {
 		$("#salval").html("$" + new Intl.NumberFormat('en-US').format($("#writeSalary").val()));
+	});
+	
+	$("#modifySalary").change(function() {
+		$("#modifySalval").html("$" + new Intl.NumberFormat('en-US').format($("#modifySalary").val()));
 	});
 	
 	$(".orderMethod").click(function (){
@@ -108,7 +200,7 @@ $(document).ready(function() {
 
 });
 
-let empData = null;
+let empData = null; // 전체 사원 데이터
 let jobsData = null;
 let deptData = null;
 
@@ -118,9 +210,43 @@ function getAllEmployees() {
 	$.ajax({
 		url : url,
 		type : 'get',
-		data : {"seachName" : $("#byName").val(),
-				"sortOrder" : $(".orderMethod:checked").val()
-			},
+		dataType : 'json',
+		// 			async: false,
+		success : function(data) {
+			console.log(data);
+			empData = data;
+			outputEntireEmployees(data);
+		},
+		error : function() {
+		},
+		complete : function() {
+		}
+	});
+}
+
+function getAllEmp(name, order) {
+	if (order == 'orderEmpAsc') {
+		order = 'e.employee_id'
+	} else if (order == 'orderEmpDesc'){
+		order = 'e.employee_id desc'
+	} else if (order == 'orderHireDateAsc'){
+		order = 'e.hire_date'
+	} else if (order == 'orderHireDateDesc'){
+		order = 'e.hire_date desc'
+	} else if (order == 'orderSalDesc'){
+		order = 'e.salary desc'
+	}
+	
+	
+	let url = "getAllEmployees.do?orderMethod=" + order;
+	if (name != null) {
+		url += '&searchName='+ name.toLowerCase();
+	}
+	
+	
+	$.ajax({
+		url : url,
+		type : 'get',
 		dataType : 'json',
 		// 			async: false,
 		success : function(data) {
@@ -211,29 +337,13 @@ function outputEntireEmployees(json) {
 			
 	output += "<td>" + managerName + "</td>";
 	output += "<td>" + item.department_name + "</td>";
-	output += "<td ><Image src='img/modify.png' class='modifyIcon'></td>";
-	output += "<td ><Image src='img/remove.png' class='removeIcon' name='empId' value='" + item.employee_id + "'></td></tr>";
+	output += "<td ><Image src='img/modify.png' class='modifyIcon' onclick='modifyModalShow(" + item.employee_id + ");'></td>";
+	output += "<td ><Image src='img/remove.png' class='removeIcon' onclick='deleteModalShow(" + item.employee_id + ");'></td></tr>";
 	
 	});
 	output += "</tbody></table>";
 
 	$(".empInfo").html(output);
-	
-	$(".modifyIcon").click(function(){
-		$("#modifyModal").show();
-	});
-	
-	$(".modalClose").click(function() {
-		$("#modifyModal").hide();
-	});
-	
-	$(".removeIcon").on("click", this, function(){
-		$("#deleteModal").show();
-	});
-	
-	$(".modalClose").click(function() {
-		$("#deleteModal").hide();
-	});
 	
 }
 
@@ -269,14 +379,24 @@ function makeDeptSelection() {
 
 // 직종 선택에 따른 급여 범위 설정 및 출력
 // 1) 내가 짠 코드
-function makeSalaryRange() {
-	$.each(jobsData.jobs, function(i, item){
-		if ($("#writeJobId").val() == item.job_id) {
-			$("#writeSalary").attr('min', item.min_salary).attr('max', item.max_salary);;
-			$("#salval-min").html("$" + new Intl.NumberFormat('en-US').format(item.min_salary));
-			$("#salval-max").html("$" + new Intl.NumberFormat('en-US').format(item.max_salary));
-		}
-	});
+function makeSalaryRange(mode) {
+	if (mode == null){
+		$.each(jobsData.jobs, function(i, item){
+			if ($("#writeJobId").val() == item.job_id) {
+				$("#writeSalary").attr('min', item.min_salary).attr('max', item.max_salary);;
+				$("#salval-min").html("$" + new Intl.NumberFormat('en-US').format(item.min_salary));
+				$("#salval-max").html("$" + new Intl.NumberFormat('en-US').format(item.max_salary));
+			}
+		});
+	} else if (mode == "modify"){
+		$.each(jobsData.jobs, function(i, item){
+			if ($("#modifyJobId").val() == item.job_id) {
+				$("#modifySalary").attr('min', item.min_salary).attr('max', item.max_salary);;
+				$("#modifySalval-min").html("$" + new Intl.NumberFormat('en-US').format(item.min_salary));
+				$("#modifySalval-max").html("$" + new Intl.NumberFormat('en-US').format(item.max_salary));
+			}
+		});
+	}
 }
 
 // 2) 수업시간에 짠 코드
@@ -302,14 +422,23 @@ function makeSalaryRange() {
 //}
 
 // 부서에 따라 담당 직원을 사수로 선택할 수 있도록 출력
-function makeMgrSelection() {
+function makeMgrSelection(mode) {
 	let output = "<option value=''>=== 직속 상사를 입력하세요 ===</option>";
-	$.each(empData.employees, function(i, item){
-		if ($("#writeDepartmentName").val() == item.department_id) {
-			output += "<option id='" + item.employee_id +"' value='" + item.employee_id + "'>" + item.first_name + " "
-			+ item.last_name + "</option>"
-		}
-	});
+	if (mode == null){
+		$.each(empData.employees, function(i, item){
+			if ($("#writeDepartmentName").val() == item.department_id) {
+				output += "<option id='" + item.employee_id +"' value='" + item.employee_id + "'>" + item.first_name + " "
+				+ item.last_name + "</option>"
+			}
+		});
+	} else if (mode == "modify"){	
+		$.each(empData.employees, function(i, item){
+			if ($("#modifyDepartmentName").val() == item.department_id) {
+				output += "<option id='" + item.employee_id +"' value='" + item.employee_id + "'>" + item.first_name + " "
+				+ item.last_name + "</option>"
+			}
+		});
+	}
 	return output;
 }
 
@@ -332,7 +461,7 @@ function inputEmpValidate(empTemp){
 			type : 'post',
 			data : empTemp,
 			dataType : 'json',
-// 			async: false,
+//  			async: false,
 			success : function(data) {
 				if (data.status == "fail") {
 					alert("데이터를 불러오지 못했습니다.")
@@ -353,11 +482,53 @@ function inputEmpValidate(empTemp){
 	}
 }
 
+function modifyEmpValidate(empTemp){
+	// last_name: not null
+	// email : not null &  Unique
+	// hire_date : not null
+//	console.log("여기까지");
+	let isLastNameValid = lastNameValid(empTemp.last_name);
+	let isEmailValid = emailValid(empTemp.email);
+	let isHiredateValid = hiredateValid(empTemp.hire_date);
+	let isJobIdValid = jobIdValid(empTemp.job_id);
+	let isDepartmentIdValid = departmentIdValid(empTemp.department_id);
+	let isManagerIdValid = managerIdValid(empTemp.manager_id);
+	console.log(isLastNameValid, isEmailValid, isHiredateValid, isJobIdValid, isDepartmentIdValid, isManagerIdValid)
+	// 모두 통과 하면
+	if (isLastNameValid && isEmailValid && isHiredateValid && isJobIdValid && isDepartmentIdValid && isManagerIdValid) {
+		$.ajax({
+			url : 'modifyEmployee.do',
+			type : 'post',
+			data : empTemp,
+			dataType : 'json',
+//  			async: false,
+			success : function(data) {
+				if (data.status == "fail") {
+					alert("정보가 수정되지 않았습니다.")
+				} else if (data.status == "success"){
+					console.log(data);
+					alert("수정 완료");
+				}
+				$("#modifyModal").hide();
+				getAllEmployees();
+
+
+			},
+			error : function() {
+			},
+			complete : function() {
+			}
+		});
+		
+	}
+}
+
 function lastNameValid(lastname) {
 	let isLastNameValid = true;
 	
 	if (lastname.length < 1) {
 		printErrMsg ("writeLastName", "성은 필수 항목입니다.");
+		printErrMsg ("modifyLastName", "성은 필수 항목입니다.");
 		isLastNameValid = false;
 	} 
 	return isLastNameValid;
@@ -369,6 +540,7 @@ function emailValid(email){
 	// NN Check
 	if (email.length < 1) {
 		printErrMsg ("writeEmail", "Email은 필수 항목입니다");
+		printErrMsg ("modifyEmail", "Email은 필수 항목입니다");
 		isEmailNN = false;
 	}
 	
@@ -376,6 +548,7 @@ function emailValid(email){
 	$.each(empData.employees, function (i, item){
 		if (email.toUpperCase() == item.email.toUpperCase()) {
 			printErrMsg ("writeEmail", '이미 등록된 Email입니다.');
+			printErrMsg ("modifyEmail", '이미 등록된 Email입니다.');
 			isEmailUQ = false;
 		}
 	})
@@ -391,6 +564,7 @@ function hiredateValid(hire_date) {
 	isHiredateValid = true;
 	if (hire_date.length < 1) {
 		printErrMsg ("writeHireDate", "입사일을 기입하세요");
+		printErrMsg ("modifyHireDate", "입사일을 기입하세요");
 		isHiredateValid = false;
 	}
 	return isHiredateValid;
@@ -400,6 +574,7 @@ function jobIdValid(jobId){
 	isJobIdValid = true;
 	if (jobId == '') {
 		printErrMsg ("writeJobId", "직무를 선택하세요");
+		printErrMsg ("modifyJobId", "직무를 선택하세요");
 		isJobIdValid = false;
 	}
 	return isJobIdValid;
@@ -408,6 +583,7 @@ function departmentIdValid(departmentId){
 	isDepartmentValid = true;
 	if (departmentId == '') {
 		printErrMsg ("writeDepartmentName", "부서를 선택하세요");
+		printErrMsg ("modifyDepartmentName", "부서를 선택하세요");
 		isDepartmentValid = false;
 	}
 	return isDepartmentValid;
@@ -417,15 +593,11 @@ function managerIdValid(managerId){
 	isManagerIdValid = true;
 	if (managerId == '') {
 		printErrMsg ("writeManagerId", "매니저를 선택하세요");
+		printErrMsg ("modifyManagerId", "매니저를 선택하세요");
 		isManagerIdValid = false;
 	}
 	return isManagerIdValid;
 }
-
-//function mobileValid(mobile) {
-//	isMobileValid = true;
-//	let 
-//}
 
 // 유효성 검사 Error 메시지
 function printErrMsg (id, msg) {
@@ -497,4 +669,55 @@ function selectOrderMethod(orderMethod) {
 	});
 }
 
+function modifyModalShow(empNo){
+	
+	$("#modifyModal").show();
+	$("#modifyEmployeeId").val(empNo); // 사원 수정 모달에 바인딩
+	
+		$.ajax({
+		url : 'getEmployee.do',
+		type : 'post',
+		data : {"empNo" : empNo},
+		dataType : 'json',
+//		async: false,
+		success : function(data) {
+			if (data.status == "fail") {
+				alert("데이터를 불러오지 못했습니다.")
+			} else if (data.status == "success"){
+				console.log(data);
+				bindingDataModifyModal(data);
+			}
+		},
+		error : function() {
+		},
+		complete : function() {
+		}
+	});
+}
 
+function bindingDataModifyModal(data){
+	$("#modifyFirstName").val(data.employee.first_name);
+	$("#modifyLastName").val(data.employee.last_name);
+	$("#modifyEmail").val(data.employee.email);
+	$("#modifyPhoneNumber").val(data.employee.phone_number);
+	$("#modifyHireDate").val(data.employee.hire_date);
+	
+	$("#modifyJobId").html(makeJobSelection());
+	$("#modifyJobId").val(data.employee.job_id);
+	$("#modifySalval").html(" $ " + new Intl.NumberFormat('en-US').format(data.employee.salary));
+	$("#modifySalary").val(data.employee.salary);
+		makeSalaryRange("modify")
+
+	$("#modifyDepartmentName").html(makeDeptSelection());
+	$("#modifyDepartmentName").val(data.employee.department_id);
+	$("#modifyManagerId").html(makeMgrSelection("modify"));
+	$("#modifyManagerId").val(data.employee.manager_id);
+}
+
+
+function deleteModalShow(empNo){
+	$("#deleteModal").show();
+	$("#deleteEmpNo").html(empNo);
+	$("#deleteSubmit").attr("value", empNo); 
+
+}
