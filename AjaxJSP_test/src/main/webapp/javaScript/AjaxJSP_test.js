@@ -1,18 +1,27 @@
 $(document).ready(function() {
-//	getAllEmployees();
+	getAllEmployees();
+	let empByName = $("#byName").val();
+	let orderMethod = "orderEmpAsc"
 	getJobsData();
 	getDeptData();
-	
-	
-	let empByName = $("#byName").val();
-	let orderMethod = "";
-	
-	getAllEmp (null, "orderEmpAsc");
+	getAllEmp (null, orderMethod);
 	// 사원 이름으로 검색
-	$("#byName").keyup(function(){
-		empByName = $(this).val();
-		if (empByName > 1) { // 검색어가 두글자 이상인 경우
-			getAllEmp (empByName, orderMethod);
+//	$("#byName").keyup(function(){
+//		empByName = $(this).val();
+//		orderMethod = $(".orderMethod:checked").val();
+//		if (empByName > 1) { // 검색어가 두글자 이상인 경우
+//			getAllEmp (empByName, orderMethod);
+//		}
+//	});
+
+	$("#byName").keyup(function(e){
+		if (e.keyCode == 13) {
+			orderMethod = $(".orderMethod:checked").val();
+			// 엔터키를 눌렀을 때
+			if ($(this).val().length > 1){
+				empByName = $("#byName").val();
+				getAllEmp (empByName, orderMethod);
+			}
 		}
 	});
 	
@@ -22,8 +31,12 @@ $(document).ready(function() {
 		getAllEmp (empByName, orderMethod);
 	});
 	
-	
-	
+	$("#resetList").click(function (){
+		orderMethod = $(".orderMethod:checked").val();
+		$("#byName").val(null);
+		getAllEmp (null, orderMethod);
+	});
+		
 	$(".writeIcon").click(function() {
 		//사원 입력 시 필요한 부가 정보 모달창 띄우기
 		$("#writeJobId").html(makeJobSelection());
@@ -49,23 +62,12 @@ $(document).ready(function() {
 	});
 	
 	// 지속적으로 입력시 중복 검사도 가능 
-	$("#byName").keyup(function(e){
-		if (e.keyCode == 13) {
-			// 엔터키를 눌렀을 때
-			if ($(this).val().length > 1){
-				searchByName(empByName, orderMethod);
-			}
-		}
-	});
-	
-	$(".orderMethod").change(function(e){
-		searchByName(empByName, orderMethod);
-
-	});
-	
 
 	
-
+//	$(".orderMethod").change(function(e){
+//		searchByName(empByName, orderMethod);
+//	});
+	
 //	// 지속적으로 입력시 중복 검사도 가능 
 //	$(".orderMethod").on("change", this, function(){
 //			let orderMethod = $(".orderMethod:checked").val();
@@ -159,6 +161,8 @@ $(document).ready(function() {
 	$("#deleteSubmit").click (function(){
 		let empNo = $(this).val();
 		console.log(empNo);
+		let empByName = $("#byName").val();
+		let orderMethod = $(".orderMethod:checked").val();
 		$.ajax({
 			url : 'deleteEmployee.do',
 			type : 'post',
@@ -167,14 +171,14 @@ $(document).ready(function() {
 	//		async: false,
 			success : function(data) {
 				if (data.status == "fail") {
-					alert("정보가 수정되지 않았습니다.")
+					alert("정보가 삭제되지 않았습니다.")
 				} else if (data.status == "success"){
 					console.log(data);
 					alert("삭제 완료");
 				}
 				$("#deleteModal").hide();
-				getAllEmployees();
-			},
+				getAllEmp(empByName, orderMethod)
+				},
 			error : function() {
 				alert("fail");
 			},
@@ -193,10 +197,10 @@ $(document).ready(function() {
 		$("#modifySalval").html("$" + new Intl.NumberFormat('en-US').format($("#modifySalary").val()));
 	});
 	
-	$(".orderMethod").click(function (){
-		let orderMethod = $(".orderMethod:checked").val();
-		selectOrderMethod(orderMethod);
-	});
+//	$(".orderMethod").click(function (){
+//		let orderMethod = $(".orderMethod:checked").val();
+//		selectOrderMethod(orderMethod);
+//	});
 
 });
 
@@ -215,7 +219,7 @@ function getAllEmployees() {
 		success : function(data) {
 			console.log(data);
 			empData = data;
-			outputEntireEmployees(data);
+//			outputEntireEmployees(data);
 		},
 		error : function() {
 		},
@@ -237,12 +241,11 @@ function getAllEmp(name, order) {
 		order = 'e.salary desc'
 	}
 	
-	
 	let url = "getAllEmployees.do?orderMethod=" + order;
+	
 	if (name != null) {
 		url += '&searchName='+ name.toLowerCase();
-	}
-	
+	} 
 	
 	$.ajax({
 		url : url,
@@ -251,7 +254,7 @@ function getAllEmp(name, order) {
 		// 			async: false,
 		success : function(data) {
 			console.log(data);
-			empData = data;
+//			empData = data;
 			outputEntireEmployees(data);
 		},
 		error : function() {
@@ -456,6 +459,8 @@ function inputEmpValidate(empTemp){
 //	let isMobileValid = mobileValid(empTemp.mobile);
 	// 모두 통과 하면
 	if (isLastNameValid && isEmailValid && isHiredateValid && isJobIdValid && isDepartmentIdValid && isManagerIdValid) {
+		let empByName = $("#byName").val();
+		let orderMethod = $(".orderMethod:checked").val();
 		$.ajax({
 			url : 'insertEmployee.do',
 			type : 'post',
@@ -470,7 +475,7 @@ function inputEmpValidate(empTemp){
 					alert("저장 완료");
 				}
 				$("#writeModal").hide();
-				getAllEmployees();
+				getAllEmp(empByName, orderMethod)
 				deleteWriteModalContents();	
 
 			},
@@ -488,7 +493,7 @@ function modifyEmpValidate(empTemp){
 	// hire_date : not null
 //	console.log("여기까지");
 	let isLastNameValid = lastNameValid(empTemp.last_name);
-	let isEmailValid = emailValid(empTemp.email);
+	let isEmailValid = emailValidModify(empTemp.email);
 	let isHiredateValid = hiredateValid(empTemp.hire_date);
 	let isJobIdValid = jobIdValid(empTemp.job_id);
 	let isDepartmentIdValid = departmentIdValid(empTemp.department_id);
@@ -496,6 +501,8 @@ function modifyEmpValidate(empTemp){
 	console.log(isLastNameValid, isEmailValid, isHiredateValid, isJobIdValid, isDepartmentIdValid, isManagerIdValid)
 	// 모두 통과 하면
 	if (isLastNameValid && isEmailValid && isHiredateValid && isJobIdValid && isDepartmentIdValid && isManagerIdValid) {
+		let empByName = $("#byName").val();
+		let orderMethod = $(".orderMethod:checked").val();
 		$.ajax({
 			url : 'modifyEmployee.do',
 			type : 'post',
@@ -510,7 +517,7 @@ function modifyEmpValidate(empTemp){
 					alert("수정 완료");
 				}
 				$("#modifyModal").hide();
-				getAllEmployees();
+				getAllEmp(empByName, orderMethod)
 
 
 			},
@@ -540,7 +547,6 @@ function emailValid(email){
 	// NN Check
 	if (email.length < 1) {
 		printErrMsg ("writeEmail", "Email은 필수 항목입니다");
-		printErrMsg ("modifyEmail", "Email은 필수 항목입니다");
 		isEmailNN = false;
 	}
 	
@@ -548,7 +554,6 @@ function emailValid(email){
 	$.each(empData.employees, function (i, item){
 		if (email.toUpperCase() == item.email.toUpperCase()) {
 			printErrMsg ("writeEmail", '이미 등록된 Email입니다.');
-			printErrMsg ("modifyEmail", '이미 등록된 Email입니다.');
 			isEmailUQ = false;
 		}
 	})
@@ -558,6 +563,15 @@ function emailValid(email){
 	} else { 
 		return false;
 	}
+}
+function emailValidModify(email){
+	let isEmailNN = true;
+	// NN Check
+	if (email.length < 1) {
+		printErrMsg ("modifyEmail", "Email은 필수 항목입니다");
+		isEmailNN = false;
+	}
+		return isEmailNN;
 }
 
 function hiredateValid(hire_date) {
@@ -607,30 +621,31 @@ function printErrMsg (id, msg) {
 	$(".errMsg").hide(2000);
 }
 
-function searchByName(name, orderMethod) {
-	$.ajax({
-			url : 'getEmpByName.do',
-			type : 'post',
-			data : {
-					"byName" : name.toLowerCase(),
-					"sortOrder" :orderMethod
-					},
-			dataType : 'json',
-// 			async: false,
-			success : function(data) {
-				if (data.status == "fail") {
-					alert("데이터를 불러오지 못했습니다.")
-				} else if (data.status == "success"){
-					console.log(data);
-					outputEntireEmployees(data)
-				}
-			},
-			error : function() {
-			},
-			complete : function() {
-			}
-		});
-}
+//function searchByName(name, orderMethod) {
+//	$.ajax({
+//			url : 'getEmpByName.do',
+//			type : 'post',
+//			data : {
+//					"byName" : name.toLowerCase(),
+//					"sortOrder" :orderMethod
+//					},
+//			dataType : 'json',
+//// 			async: false,
+//			success : function(data) {
+//				if (data.status == "fail") {
+//					alert("데이터를 불러오지 못했습니다.")
+//				} else if (data.status == "success"){
+//					console.log(data);
+//					outputEntireEmployees(data)
+//				}
+//			},
+//			error : function() {
+//			},
+//			complete : function() {
+//			}
+//		});
+//}
+
 function deleteWriteModalContents(){
 	$("#writeFirstName").val("");
 	$("#writeLastName").val("");
@@ -646,28 +661,28 @@ function deleteWriteModalContents(){
 	$("#salval").val("");
 }
 
-function selectOrderMethod(orderMethod) {
-	$.ajax({
-		url : 'orderByEmp.do',
-		type : 'post',
-		data : {"sortOrder" : orderMethod},
-		dataType : 'json',
-//		async: false,
-		success : function(data) {
-			if (data.status == "fail") {
-				alert("데이터를 불러오지 못했습니다.")
-			} else if (data.status == "success"){
-				console.log(data);
-				outputEntireEmployees(data);	
-
-			}
-		},
-		error : function() {
-		},
-		complete : function() {
-		}
-	});
-}
+//function selectOrderMethod(orderMethod) {
+//	$.ajax({
+//		url : 'orderByEmp.do',
+//		type : 'post',
+//		data : {"sortOrder" : orderMethod},
+//		dataType : 'json',
+////		async: false,
+//		success : function(data) {
+//			if (data.status == "fail") {
+//				alert("데이터를 불러오지 못했습니다.")
+//			} else if (data.status == "success"){
+//				console.log(data);
+//				outputEntireEmployees(data);	
+//
+//			}
+//		},
+//		error : function() {
+//		},
+//		complete : function() {
+//		}
+//	});
+//}
 
 function modifyModalShow(empNo){
 	

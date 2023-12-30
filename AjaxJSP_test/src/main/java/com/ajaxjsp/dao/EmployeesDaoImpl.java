@@ -41,37 +41,39 @@ public class EmployeesDaoImpl implements EmployeesDao {
 		PreparedStatement pstmt = null;
 		List<EmployeeVo> employeeList = new ArrayList<>();
 		ResultSet rs = null;
-		String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID WHERE QUITDATE = NULL ";
-		if (con != null) {
-			if (name == "" || name == null) {
-				query += "ORDER BY "+ order;
-				pstmt = con.prepareStatement(query);
-	
-			} else if (name != null || name != ""){
-				query += "AND LOWER(E.FIRST_NAME) LIKE ? OR LOWER(E.LAST_NAME) LIKE ? ORDER BY " + order;
-				pstmt = con.prepareStatement(query);
-				pstmt.setString(1, "%" + name + "%");
-				pstmt.setString(2, "%" + name + "%");
-			}
-		System.out.println(query);
+		String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID WHERE E.QUITDATE IS NULL ";
+		if (order == null) {
+			order = "E.EMPLOYEE_ID";
+		}
+		
+		if (name == null) {
+			query += "ORDER BY "+ order;
+			pstmt = con.prepareStatement(query);
+		} else if (name != null){
+			query += "AND LOWER(E.FIRST_NAME) LIKE ? OR LOWER(E.LAST_NAME) LIKE ? ORDER BY " + order;
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, "%" + name + "%");
+			pstmt.setString(2, "%" + name + "%");
+		}
+		
+		System.out.println(query + " 1 ");
 		rs = pstmt.executeQuery();
 
-			while (rs.next()) {
-				employeeList.add(new EmployeeVo(rs.getInt("EMPLOYEE_ID"), 
-												rs.getString("FIRST_NAME"), 
-												rs.getString("LAST_NAME"), 
-												rs.getString ("EMAIL"), 
-												rs.getString ("PHONE_NUMBER"),
-												rs.getDate ("HIRE_DATE"), 
-												rs.getString ("JOB_ID"), 
-												rs.getDouble ("SALARY"), 
-												rs.getDouble ("COMMISSION_PCT"), 
-												rs.getInt ("MANAGER_ID"),
-												rs.getInt ("DEPARTMENT_ID"), 
-												rs.getString ("DEPARTMENT_NAME")));
-			}
-			DBConnection.dbClose(rs, pstmt, con);
+		while (rs.next()) {
+			employeeList.add(new EmployeeVo(rs.getInt("EMPLOYEE_ID"), 
+											rs.getString("FIRST_NAME"), 
+											rs.getString("LAST_NAME"), 
+											rs.getString ("EMAIL"), 
+											rs.getString ("PHONE_NUMBER"),
+											rs.getDate ("HIRE_DATE"), 
+											rs.getString ("JOB_ID"), 
+											rs.getDouble ("SALARY"), 
+											rs.getDouble ("COMMISSION_PCT"), 
+											rs.getInt ("MANAGER_ID"),
+											rs.getInt ("DEPARTMENT_ID"), 
+											rs.getString ("DEPARTMENT_NAME")));
 		}
+		DBConnection.dbClose(rs, pstmt, con);
 		return employeeList;
 	}
 	
@@ -84,9 +86,9 @@ public class EmployeesDaoImpl implements EmployeesDao {
 		PreparedStatement pstmt = null;
 		List<EmployeeVo> employeeList = new ArrayList<>();
 		ResultSet rs = null;
-		String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID WHERE QUITDATE = NULL";
+		String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID WHERE QUITDATE IS NULL";
 		
-		System.out.println(query);
+		System.out.println(query + " 2 ");
 		if (con != null) {
 			pstmt = con.prepareStatement(query);
 			rs = pstmt.executeQuery();
@@ -167,7 +169,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 		PreparedStatement pstmt = null;
 		
 		if (con != null) {
-			String query = " insert into employees values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			String query = " insert into employees values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, null)";
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, empId);
 			pstmt.setString(2, dto.getFirst_name());
@@ -326,7 +328,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 		
 		
 		
-		if (con != null) {
+
 			pstmt = con.prepareStatement(query);
 			pstmt.setString(1, "%" + name + "%");
 			pstmt.setString(2, "%" + name + "%");
@@ -345,7 +347,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 												rs.getInt ("MANAGER_ID"),
 												rs.getInt ("DEPARTMENT_ID"), 
 												rs.getString ("DEPARTMENT_NAME")));
-			}
+			
 			DBConnection.dbClose(rs, pstmt, con);
 		}
 		return employeeList;
@@ -455,6 +457,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 			pstmt.setInt(9, dto.getManager_id());
 			pstmt.setInt(10, dto.getDepartment_id());
 			pstmt.setInt(11, dto.getEmployee_id());
+			
 			
 			result = pstmt.executeUpdate();
 		

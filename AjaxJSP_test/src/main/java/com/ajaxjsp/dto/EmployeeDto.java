@@ -15,6 +15,7 @@ public class EmployeeDto {
 	private double commition_pct;
 	private int manager_id;
 	private int department_id;
+	private Date quitdate;
 	
 	
 	
@@ -36,6 +37,7 @@ public class EmployeeDto {
 		this.commition_pct = commition_pct;
 		this.manager_id = manager_id;
 		this.department_id = department_id;
+		this.quitdate = null;
 	}
 
 	public EmployeeDto(int employee_id, String first_name, String last_name, String email, String phone_number,
@@ -52,6 +54,7 @@ public class EmployeeDto {
 		this.commition_pct = commition_pct;
 		this.manager_id = manager_id;
 		this.department_id = department_id;
+		this.quitdate = null;
 	}
 
 	public void setEmployee_id(int employee_id) {
@@ -96,6 +99,10 @@ public class EmployeeDto {
 
 	public void setDepartment_id(int department_id) {
 		this.department_id = department_id;
+	}
+	
+	public void setQuitdate(Date quitdate) {
+		this.quitdate = quitdate;
 	}
 
 	public int getEmployee_id() {
@@ -142,6 +149,10 @@ public class EmployeeDto {
 		return department_id;
 	}
 
+
+	public Date getQuitdate() {
+		return quitdate;
+	}
 
 	@Override
 	public String toString() {

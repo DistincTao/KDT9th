@@ -37,7 +37,7 @@ public class DeleteEmployeeServlet extends HttpServlet {
 		
 		try {
 			int result = dao.deleteEmployee(empId);
-			if (result == 1){ // 사원정보 수정 성공
+			if (result == 1){ // 사원정보 삭제 성공
 				JSONObject json = new JSONObject();
 				json.put("status" , "success");
 				SimpleDateFormat fmt = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초");
@@ -46,7 +46,7 @@ public class DeleteEmployeeServlet extends HttpServlet {
 				
 				out.print(json.toJSONString());
 				
-			} else if (result != 1) { // 사원정보 수정 실패
+			} else if (result != 1) { // 사원정보 삭제 실패
 				JSONObject json = new JSONObject();
 				json.put("status" , "fail");
 				SimpleDateFormat fmt = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초");

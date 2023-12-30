@@ -60,7 +60,7 @@
 			<div class="byName">
 				  <div class="mb-3 mt-3">
     				<input type="text" class="form-control" id="byName" placeholder="검색할 이름을 입력하세요(두글자 이상)" name="byName">
-<!--     				<input type="text" class="form-control" id="byName" placeholder="Steven King" name="byName"> -->
+    				<button type="button" class="btn btn-primary" id="resetList">전체보기</button>
   				</div>
 			</div>
 			<div class="sortEmp">
@@ -132,7 +132,7 @@
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">Hire Date</span>
-								<input type="date" class="form-control" id="writeHireDate" name="hire_date" required="required" readonly>
+								<input type="date" class="form-control" id="writeHireDate" name="hire_date" required="required">
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">Department</span> 
@@ -236,7 +236,7 @@
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">Hire Date</span>
-								<input type="date" class="form-control" id="modifyHireDate" name="hire_date" required="required">
+								<input type="date" class="form-control" id="modifyHireDate" name="hire_date" required="required" readonly>
 							</div>
 							<div class="input-group input-group-sm mb-3">
 								<span class="input-group-text">Department</span> 

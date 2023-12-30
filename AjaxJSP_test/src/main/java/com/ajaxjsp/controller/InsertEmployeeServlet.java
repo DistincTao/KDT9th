@@ -47,7 +47,7 @@ public class InsertEmployeeServlet extends HttpServlet {
 										  Double.parseDouble(request.getParameter("commition_pct")),
 										  Integer.parseInt(request.getParameter("manager_id")),
 										  Integer.parseInt(request.getParameter("department_id")));
-	
+	System.out.println(dto.toString());
 		try {
 //			int empId = dao.getNextEmpId();
 //			dao.insertEmployee(empId, dto);

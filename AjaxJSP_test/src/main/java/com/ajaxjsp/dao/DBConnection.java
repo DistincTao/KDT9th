@@ -16,8 +16,7 @@ public class DBConnection {
 
 	public static Connection dbConnect() throws SQLException, NamingException {
 		Context initContext = new InitialContext();
-		Context envContext  = (Context)initContext.lookup("java:/comp/env");
-		DataSource ds = (DataSource)envContext.lookup("jdbc/distincTao");
+		DataSource ds = (DataSource)initContext.lookup("java:/comp/env/jdbc/distincTao");
 		Connection conn = ds.getConnection();
 
 		return conn; // pool에서 커넥션 반환

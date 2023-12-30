@@ -36,6 +36,7 @@ public class ModifyEmployeeServlet extends HttpServlet {
 		response.setContentType("application/json; charset=utf-8");
 		EmployeesDao dao = EmployeesDaoImpl.getInstance();
 		PrintWriter out = response.getWriter();
+		System.out.println(request.getParameter("employee_id"));
 		EmployeeDto dto = new EmployeeDto(Integer.parseInt(request.getParameter("employee_id")),
 										  request.getParameter("first_name"), 
 				  						  request.getParameter("last_name"),
@@ -48,7 +49,7 @@ public class ModifyEmployeeServlet extends HttpServlet {
 										  Integer.parseInt(request.getParameter("manager_id")),
 										  Integer.parseInt(request.getParameter("department_id")));
 		
-		System.out.println(dto.toString());
+		System.out.println(dto.toString() + " 3");
 		try {
 			int result = dao.modifyEmployee(dto);
 			if (result == 1){ // 사원정보 수정 성공
