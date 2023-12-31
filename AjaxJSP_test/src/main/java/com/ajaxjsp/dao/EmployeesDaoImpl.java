@@ -17,8 +17,6 @@ import com.ajaxjsp.vo.EmployeeVo;
 import com.ajaxjsp.vo.JobsVo;
 
 
-
-
 public class EmployeesDaoImpl implements EmployeesDao {
 	private static EmployeesDaoImpl instance = new EmployeesDaoImpl();
 	
@@ -41,16 +39,17 @@ public class EmployeesDaoImpl implements EmployeesDao {
 		PreparedStatement pstmt = null;
 		List<EmployeeVo> employeeList = new ArrayList<>();
 		ResultSet rs = null;
-		String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID WHERE E.QUITDATE IS NULL ";
+		String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID ";
 		if (order == null) {
 			order = "E.EMPLOYEE_ID";
 		}
 		
 		if (name == null) {
-			query += "ORDER BY "+ order;
+			query += "WHERE E.QUITDATE IS NULL ORDER BY "+ order;
 			pstmt = con.prepareStatement(query);
+			
 		} else if (name != null){
-			query += "AND LOWER(E.FIRST_NAME) LIKE ? OR LOWER(E.LAST_NAME) LIKE ? ORDER BY " + order;
+			query += "WHERE (LOWER(E.FIRST_NAME) LIKE ? OR LOWER(E.LAST_NAME) LIKE ?) AND E.QUITDATE IS NULL ORDER BY " + order;
 			pstmt = con.prepareStatement(query);
 			pstmt.setString(1, "%" + name + "%");
 			pstmt.setString(2, "%" + name + "%");
@@ -70,7 +69,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 											rs.getDouble ("SALARY"), 
 											rs.getDouble ("COMMISSION_PCT"), 
 											rs.getInt ("MANAGER_ID"),
-											rs.getInt ("DEPARTMENT_ID"), 
+											rs.getInt ("DEPARTMENT_ID"),
 											rs.getString ("DEPARTMENT_NAME")));
 		}
 		DBConnection.dbClose(rs, pstmt, con);
@@ -260,7 +259,6 @@ public class EmployeesDaoImpl implements EmployeesDao {
 			
 		}
 		DBConnection.dbClose(pstmt, con);
-		
 		return result;
 	}
 
@@ -275,7 +273,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 		System.out.println(dto.getFirst_name());
 		
 		if (con != null) {
-			String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID WHERE LOWER(E.FIRST_NAME) LIKE ? AND LOWER(E.LAST_NAME) LIKE ?";
+			String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID WHERE (LOWER(E.FIRST_NAME) LIKE ? AND LOWER(E.LAST_NAME) LIKE ?)";
 			pstmt = con.prepareStatement(query);
 			pstmt.setString(1, "%" + dto.getFirst_name() + "%");
 			pstmt.setString(2, "%" + dto.getLast_name() + "%");
@@ -292,7 +290,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 												rs.getDouble ("SALARY"), 
 												rs.getDouble ("COMMISSION_PCT"), 
 												rs.getInt ("MANAGER_ID"),
-												rs.getInt ("DEPARTMENT_ID"), 
+												rs.getInt ("DEPARTMENT_ID"),
 												rs.getString ("DEPARTMENT_NAME")));
 			}
 			DBConnection.dbClose(rs, pstmt, con);
@@ -345,7 +343,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 												rs.getDouble ("SALARY"), 
 												rs.getDouble ("COMMISSION_PCT"), 
 												rs.getInt ("MANAGER_ID"),
-												rs.getInt ("DEPARTMENT_ID"), 
+												rs.getInt ("DEPARTMENT_ID"),
 												rs.getString ("DEPARTMENT_NAME")));
 			
 			DBConnection.dbClose(rs, pstmt, con);
@@ -393,7 +391,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 												rs.getDouble ("SALARY"), 
 												rs.getDouble ("COMMISSION_PCT"), 
 												rs.getInt ("MANAGER_ID"),
-												rs.getInt ("DEPARTMENT_ID"), 
+												rs.getInt ("DEPARTMENT_ID"),
 												rs.getString ("DEPARTMENT_NAME")));
 			}
 			DBConnection.dbClose(rs, pstmt, con);
@@ -424,7 +422,7 @@ public class EmployeesDaoImpl implements EmployeesDao {
 									  rs.getDouble ("SALARY"), 
 									  rs.getDouble ("COMMISSION_PCT"), 
 									  rs.getInt ("MANAGER_ID"),
-									  rs.getInt ("DEPARTMENT_ID"), 
+									  rs.getInt ("DEPARTMENT_ID"),
 									  rs.getString ("DEPARTMENT_NAME"));
 			}
 
@@ -465,6 +463,41 @@ public class EmployeesDaoImpl implements EmployeesDao {
 		DBConnection.dbClose(pstmt, con);
 		return result;
 		
+	}
+
+	@Override
+	public List<EmployeeVo> selectRetiredEmployees(String order) throws SQLException, NamingException {
+System.out.println(getClass().getName() + " DAO ");
+		
+		Connection con = DBConnection.dbConnect();
+		PreparedStatement pstmt = null;
+		List<EmployeeVo> employeeList = new ArrayList<>();
+		ResultSet rs = null;
+		String query = "SELECT E.*, D.DEPARTMENT_NAME FROM EMPLOYEES E INNER JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID WHERE QUITDATE IS NOT NULL";
+		if (order == null) {
+			order = "E.EMPLOYEE_ID";
+		}
+		
+		pstmt = con.prepareStatement(query);
+		rs = pstmt.executeQuery();
+
+		while (rs.next()) {
+			employeeList.add(new EmployeeVo(rs.getInt("EMPLOYEE_ID"), 
+											rs.getString("FIRST_NAME"), 
+											rs.getString("LAST_NAME"), 
+											rs.getString ("EMAIL"), 
+											rs.getString ("PHONE_NUMBER"),
+											rs.getDate ("HIRE_DATE"), 
+											rs.getString ("JOB_ID"), 
+											rs.getDouble ("SALARY"), 
+											rs.getDouble ("COMMISSION_PCT"), 
+											rs.getInt ("MANAGER_ID"),
+											rs.getInt ("DEPARTMENT_ID"),
+											rs.getDate ("QUITDATE"),
+											rs.getString ("DEPARTMENT_NAME")));
+		}
+		DBConnection.dbClose(rs, pstmt, con);
+		return employeeList;
 	}
 	
 }

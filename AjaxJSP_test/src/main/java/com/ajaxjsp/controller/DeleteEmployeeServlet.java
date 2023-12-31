@@ -45,7 +45,7 @@ public class DeleteEmployeeServlet extends HttpServlet {
 				json.put("outputDate", outputDate);
 				
 				out.print(json.toJSONString());
-				
+				System.out.println(json.toJSONString());
 			} else if (result != 1) { // 사원정보 삭제 실패
 				JSONObject json = new JSONObject();
 				json.put("status" , "fail");
@@ -59,8 +59,6 @@ public class DeleteEmployeeServlet extends HttpServlet {
 			out.print(OutputJsonForError.outputJson(e));
 			e.printStackTrace();
 		}
-		
-		response.sendRedirect("index.jsp");
 	}
 
 }

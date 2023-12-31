@@ -15,6 +15,7 @@ public class EmployeeVo {
 	private double commition_pct;
 	private int manager_id;
 	private int department_id;
+	private Date quitdate;
 	private String department_name;
 	
 	
@@ -38,6 +39,25 @@ public class EmployeeVo {
 		this.commition_pct = commition_pct;
 		this.manager_id = manager_id;
 		this.department_id = department_id;
+		this.department_name = department_name;
+	}
+
+	public EmployeeVo(int employee_id, String first_name, String last_name, String email, String phone_number,
+			Date hire_date, String job_id, double salary, double commition_pct, int manager_id, int department_id,
+			Date quitdate, String department_name) {
+		super();
+		this.employee_id = employee_id;
+		this.first_name = first_name;
+		this.last_name = last_name;
+		this.email = email;
+		this.phone_number = phone_number;
+		this.hire_date = hire_date;
+		this.job_id = job_id;
+		this.salary = salary;
+		this.commition_pct = commition_pct;
+		this.manager_id = manager_id;
+		this.department_id = department_id;
+		this.quitdate = quitdate;
 		this.department_name = department_name;
 	}
 
@@ -88,6 +108,10 @@ public class EmployeeVo {
 	public void setDepartment_name(String department_name) {
 		this.department_name = department_name;
 	}
+	
+	public void setQuitdate(Date quitdate) {
+		this.quitdate = quitdate;
+	}
 
 	public int getEmployee_id() {
 		return employee_id;
@@ -135,6 +159,10 @@ public class EmployeeVo {
 
 	public String getDepartment_name() {
 		return department_name;
+	}
+	
+	public Date getQuitdate() {
+		return quitdate;
 	}
 
 	@Override

@@ -28,4 +28,5 @@ public interface EmployeesDao {
 	public abstract List<EmployeeVo> empSortByOrder(String orderMethod) throws SQLException, NamingException;
 	public abstract EmployeeVo selectEmployeeByEmpId(int employee_id) throws SQLException, NamingException;
 	public abstract int modifyEmployee(EmployeeDto dto) throws SQLException, NamingException;
+	public abstract List<EmployeeVo> selectRetiredEmployees(String orde) throws SQLException, NamingException;
 }
