@@ -34,25 +34,38 @@ public class GetAllEmpServlet extends HttpServlet {
     }
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("ajax 통신 성공");
+		System.out.println("ajax 통신 성공 - GetAllEmpSevlet doPost");
 		response.setContentType("application/json; charset=utf-8");
 		EmpDao dao = EmpDaoImpl.getInstance();
-		
+		PrintWriter out = response.getWriter();
 		try {
 			List<EmpVo> list = dao.selectAll();
 			String outputJson = toJsonWithGson(list);
-		
-			PrintWriter out = response.getWriter();
+
 			out.print(outputJson);
 			out.close();
-			
-//			for (EmpVo vo : list) {
-//				System.out.println(vo.toString());
-//			}
-			
-		} catch (NamingException e) {
+		} catch (NamingException  | SQLException e) {
 			e.printStackTrace();
-		} catch (SQLException e) {
+		}
+	}
+	
+    
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("ajax 통신 성공 - GetAllEmpSevlet doGet");
+		response.setContentType("application/json; charset=utf-8");
+		EmpDao dao = EmpDaoImpl.getInstance();
+		PrintWriter out = response.getWriter();
+		String eName = request.getParameter("eName");
+		String order = request.getParameter("order");
+		System.out.println(eName + " ---- " + order);
+		try {
+//			List<EmpVo> list = dao.selectAll();
+			List<EmpVo> list = dao.selectAll(eName, order);
+			String outputJson = toJsonWithGson(list);
+
+			out.print(outputJson);
+			out.close();
+		} catch (NamingException  | SQLException e) {
 			e.printStackTrace();
 		}
 	}

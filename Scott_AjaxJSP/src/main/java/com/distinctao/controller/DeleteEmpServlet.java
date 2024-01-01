@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.distinctao.dao.EmpDao;
 import com.distinctao.dao.EmpDaoImpl;
+import com.distinctao.vo.EmpVo;
 
 @WebServlet("/deleteEmp.do")
 public class DeleteEmpServlet extends HttpServlet {
@@ -24,15 +25,15 @@ public class DeleteEmpServlet extends HttpServlet {
     }
 
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		EmpDao dao = EmpDaoImpl.getInstance();
-		int empId = Integer.parseInt(request.getParameter("empId"));
+		int empId = Integer.parseInt(request.getParameter("empNo"));
 		try {
-			dao.deleteEmp(empId);
+			EmpVo vo = dao.transEmp(empId);
+			dao.deleteEmp(vo);	
 		} catch (NamingException | SQLException e) {
 			e.printStackTrace();
 		}
-		response.sendRedirect("index.jsp");
 	}
 
 }

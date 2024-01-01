@@ -18,5 +18,11 @@ public interface EmpDao {
 
 	public abstract int getEmpNo() throws NamingException, SQLException;
 	
-	public abstract void deleteEmp(int empNo) throws NamingException, SQLException;
+	public abstract void deleteEmp(EmpVo vo) throws NamingException, SQLException;
+
+	public abstract List<EmpVo> selectAll(String eName, String order) throws NamingException, SQLException;
+
+	public abstract List<EmpVo> selectQuits(String order) throws NamingException, SQLException;
+
+	public abstract EmpVo transEmp(int empId) throws NamingException, SQLException;
 }

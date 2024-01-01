@@ -11,6 +11,7 @@ public class EmpVo {
 	private double sal;
 	private double comm;
 	private int deptno;
+	private Date quitdate;
 	private String dname;
 	
 
@@ -29,6 +30,19 @@ public class EmpVo {
 		this.comm = comm;
 		this.deptno = deptno;
 		this.dname = dname;
+	}
+	public EmpVo(int empno, String ename, String job, int mgr, Date hiredate, double sal, double comm, int deptno, Date quitdate, String dname) {
+		super();
+		this.empno = empno;
+		this.ename = ename;
+		this.job = job;
+		this.mgr = mgr;
+		this.hiredate = hiredate;
+		this.sal = sal;
+		this.comm = comm;
+		this.deptno = deptno;
+		this.dname = dname;
+		this.quitdate = quitdate;
 	}
 
 	public int getEmpno() {
@@ -67,11 +81,15 @@ public class EmpVo {
 		return dname;
 	}
 
+	public Date getQuitdate() {
+		return quitdate;
+	}
 
 	@Override
 	public String toString() {
 		return "EmpVo [empno=" + empno + ", ename=" + ename + ", job=" + job + ", mgr=" + mgr + ", hiredate=" + hiredate
-				+ ", sal=" + sal + ", comm=" + comm + ", deptno=" + deptno + ", dname=" + dname +"]";
+				+ ", sal=" + sal + ", comm=" + comm + ", deptno=" + deptno + ", dname=" + dname + ", quitdate="
+				+ quitdate + "]";
 	}
 	
 }

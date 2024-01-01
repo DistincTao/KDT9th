@@ -58,7 +58,7 @@
 		<h1>hr 계정 직원 목록</h1>
 		<div class="search">
 			<div class="byName">
-				  <div class="mb-3 mt-3">
+				 <div class="input-group mb-3">
     				<input type="text" class="form-control" id="byName" placeholder="검색할 이름을 입력하세요(두글자 이상)" name="byName">
     				<button type="button" class="btn btn-primary" id="allEmpList">전체보기</button>
 					<button type="button" class="btn btn-danger" id="retiredList">퇴직자보기</button>	
