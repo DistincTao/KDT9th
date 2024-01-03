@@ -1,8 +1,10 @@
 package com.jspminipjt.controller;
 
 import com.jspminipjt.service.MemberService;
+import com.jspminipjt.service.member.ConfirmEmailCodeService;
 import com.jspminipjt.service.member.DuplicateUserIdService;
 import com.jspminipjt.service.member.RegisterMemberService;
+import com.jspminipjt.service.member.SendUserEmailService;
 
 public class MemberFactory {
 	private static MemberFactory instance;
@@ -24,6 +26,10 @@ public class MemberFactory {
 			result = new DuplicateUserIdService();
 		} else if (command.equals("/member/registerMember.mem")){
 			result = new RegisterMemberService();
+		} else if (command.equals("/member/sendEmail.mem")) {
+			result = new SendUserEmailService();
+		} else if (command.equals("/member/confirmEmailCode.mem")) {
+			result = new ConfirmEmailCodeService();
 		}
 		
 		return result;

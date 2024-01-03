@@ -13,14 +13,6 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@500&display=swap');
-.header {
- 	font-family: 'Black Han Sans', sans-serif;
-	font-family: 'Noto Sans KR', sans-serif;
- 	background-image: url("img/night.jpg");
-}
-</style>
 
 <title>header</title>
 </head>

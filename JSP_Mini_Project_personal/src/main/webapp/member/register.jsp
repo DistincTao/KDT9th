@@ -14,16 +14,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script type="text/javascript" src="../js/register.js"></script>
-<link href="${contextPath }/css/register.css" rel="stylesheet">
-<link href="${contextPath }/css/header.css" rel="stylesheet">
-<link href="${contextPath }/css/jspminipjt.css" rel="stylesheet">
-<script >
+<link href="../css/register.css" rel="stylesheet">
+<link href=".././css/header.css" rel="stylesheet">
 
-</script>
-<style>
-
-
-</style>
 <title>Register Page</title>
 </head>
 <body>
@@ -47,7 +40,11 @@
   		<div class="mb-3 mt-3">
     		<label for="userEmail" class="form-label">EMAIL:</label>
    			<input type="text" class="form-control" id="userEmail" placeholder="Enter Email" name="userEmail">
-  			<button type="button" class="btn btn-warning" id="emailValidBtn">Validate</button>
+  			<button type="button" class="btn btn-warning" id="emailValidBtn">Send Email</button>
+  			<div class="codeDiv" style="display : none;">
+  				<input type="text" class="form-control" id="emailCode" placeholder="Enter Valification Code" name="emailCode">
+  				<button type="button" class="btn btn-success confirmCode">Varify Code</button>
+  			</div>
  		</div>
   		<div class="mb-3 mt-3">
     		<label for="userImg" class="form-label">IMAGE:</label>
@@ -61,7 +58,7 @@
       		<input class="form-check-input" type="checkbox" name="agree" id="agree" value="Y"> 가입 조항에 동의 합니다.
     		</label>
   		</div>
-  			<button type="submit" class="btn btn-primary" id="signInBtn">Submit</button>
+  			<button type="submit" class="btn btn-primary" id="signInBtn" onclick="return validCheck();">Submit</button>
   			<button type="reset" class="btn btn-danger" id="signResetBtn">Cancel</button>
 	</form>
 

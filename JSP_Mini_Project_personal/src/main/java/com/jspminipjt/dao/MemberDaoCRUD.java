@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import javax.naming.NamingException;
 
+import com.jspminipjt.dto.MemberDto;
 import com.jspminipjt.vo.MemberVo;
 
 public class MemberDaoCRUD implements MemberDao {
@@ -29,7 +30,7 @@ public class MemberDaoCRUD implements MemberDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
-		String query = "SELECT * from member where user_id = ?";
+		String query = "SELECT * FROM member WHERE user_id = ?";
 		
 		pstmt = con.prepareStatement(query);
 		pstmt.setString(1, userId);
@@ -47,6 +48,27 @@ public class MemberDaoCRUD implements MemberDao {
 		DBConnection.getInstance().dbConnect();		
 		
 		return result;
+	}
+
+	@Override
+	public int InsertUser(MemberDto dto) throws SQLException, NamingException {
+		int result = 0;
+
+		System.out.println("회원 가입 정보 등록 진행");
+		Connection con = DBConnection.getInstance().dbConnect();
+		PreparedStatement pstmt = null;
+		
+		String query = "INSERT INTO MEMBER (user_id, user_pwd, user_email) VALUES (?, ?, ?)";
+
+		pstmt = con.prepareStatement(query);
+		pstmt.setString(1, dto.getUserId());
+		pstmt.setString(2, dto.getUserPwd());
+		pstmt.setString(3, dto.getUserEmail());
+		
+		result = pstmt.executeUpdate();
+		
+		return result;
+		
 	}
 
 }
