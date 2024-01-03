@@ -1,6 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@500&display=swap');
+@charset "UTF-8";
 .header {
-	font-family: 'Black Han Sans', sans-serif;
-	font-family: 'Noto Sans KR', sans-serif;
-	background-image: url("./imgs/night.jpg");
+	background-image: url("../img/night.jpg");
 }
