@@ -7,14 +7,14 @@ public class MemberDto {
 	private String userPwd;
 	private String userEmail;
 	private Date regdate; 
-	private String userImg;
+	private int userImg;
 	private int userPoint;
 	public MemberDto() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	
-	public MemberDto(String userId, String userPwd, String userEmail, Date regdate, String userImg, int userPoint) {
+	public MemberDto(String userId, String userPwd, String userEmail, Date regdate, int userImg, int userPoint) {
 		super();
 		this.userId = userId;
 		this.userPwd = userPwd;
@@ -40,7 +40,7 @@ public class MemberDto {
 		return regdate;
 	}
 	
-	public String getUserImg() {
+	public int getUserImg() {
 		return userImg;
 	}
 	
@@ -64,7 +64,7 @@ public class MemberDto {
 		this.regdate = regdate;
 	}
 
-	public void setUserImg(String userImg) {
+	public void setUserImg(int userImg) {
 		this.userImg = userImg;
 	}
 

@@ -24,7 +24,7 @@
 
 <div class="container">
 	<h1>회원 가입</h1>
-	<form action="registerMember.mem" method="post">
+	<form action="registerMember.mem" method="post" enctype="multipart/form-data">
  		<div class="mb-3 mt-3">
     		<label for="userId" class="form-label">USER ID:</label>
     		<input type="text" class="form-control" id="userId" placeholder="Enter ID" name="userId">

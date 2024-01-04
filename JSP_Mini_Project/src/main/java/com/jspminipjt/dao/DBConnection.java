@@ -47,6 +47,14 @@ public class DBConnection {
 	public void dbClose(Connection con) throws SQLException {
 		con.close();
 	}
+
+	public  void dbClose (ResultSet rs, Statement stmt) throws SQLException {
+		rs.close();
+		stmt.close();
+	}
+	public  void dbClose (Statement stmt) throws SQLException {
+		stmt.close();
+	}
 }
 
 
