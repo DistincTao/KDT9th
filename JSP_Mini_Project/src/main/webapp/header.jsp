@@ -13,7 +13,9 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
+<script type="text/javascript" src="../js/login.js"></script>
+<link rel="stylesheet" href="../css/header.css">
+<link rel="stylesheet" href="../css/register.css">
 <title>header</title>
 </head>
 <body>
@@ -31,12 +33,32 @@
       <li class="nav-item">
         <a class="nav-link" href="${contextPath }/member/board.jsp">Board</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="${contextPath }/member/register.jsp">Sign In</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="${contextPath }/member/login.jsp">Log In</a>
-      </li>
+		<c:choose>
+			<c:when test="${sessionScope.login == null }" >
+		        <li class="nav-item">
+		            <a class="nav-link" href="${contextPath }/member/register.jsp">Sign In</a>
+		        </li>
+		        <li class="nav-item">
+		            <a class="nav-link" href="${contextPath }/member/login.jsp">Log In</a>
+		     	    </li>
+			</c:when>
+		  	<c:otherwise>
+	     	    <li class="nav-item">
+	     	    	 <a class="nav-link" href="${contextPath }/member/mypage.jsp"> ${sessionScope.login.userId}
+	     	    	 	<img src="${contextPath }/${sessionScope.login.memberImg }" id="userImg">
+	     	    	 </a>
+
+	     	    </li>
+		        <li class="nav-item">
+		            <a class="nav-link" href="${contextPath }/member/logout.mem">Log Out</a>
+	     	    </li>  
+		  	</c:otherwise>
+		</c:choose>
+  		<c:if test="${sessionScope.login.isAdmin == 'Y' }">
+			<li class = "nav-item">
+       			<a class="nav-link" href="${contextPath }/admin/admin.jsp">Admin Page</a>
+       		</li>
+		</c:if>
     </ul>
   </div>
 </nav>

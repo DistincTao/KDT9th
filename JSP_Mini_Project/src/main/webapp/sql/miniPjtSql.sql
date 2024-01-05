@@ -1,6 +1,5 @@
 use distinctao;
 
-
 CREATE TABLE `distinctao`.`member` (
   `user_id` VARCHAR(8) NOT NULL,
   `user_pwd` VARCHAR(50) NOT NULL,
@@ -10,11 +9,9 @@ CREATE TABLE `distinctao`.`member` (
   `user_point` INT(12) NULL DEFAULT 0,
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `user_email_UNIQUE` (`user_email` ASC) VISIBLE);
-
-SELECT * from member where user_id = ?;
-
-INSERT INTO MEMBER (user_id, user_pwd, user_email)
-values (?, ?, ?); 
+  
+ ALTER TABLE `distinctao`.`member` 
+   ADD COLUMN `is_admin` VARCHAR(1) NULL DEFAULT 'N' AFTER `user_point`;
 
 CREATE TABLE `distinctao`.`uploadedfile` (
   `file_id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -55,6 +52,11 @@ INSERT INTO `distinctao`.`pointpolicy` (`point_type`, `each_point`) VALUES ('log
 INSERT INTO `distinctao`.`pointpolicy` (`point_type`, `each_point`) VALUES ('write_board', '10');
 INSERT INTO `distinctao`.`pointpolicy` (`point_type`, `each_point`) VALUES ('write_comment', '5');
 
+SELECT * from member where user_id = ?;
+
+INSERT INTO MEMBER (user_id, user_pwd, user_email)
+values (?, ?, ?); 
+
 -- INSERT INTO uploadedfile (original_filename, ext, new_filename, fileSize) VALUES (?, ?, ?, ?)
 
 -- 현재 업로드된 파일의 file_no를 select 해와서 반환
@@ -69,4 +71,6 @@ SELECT user_id, user_email, regdate, user_img, user_point FROM member
 SELECT * FROM pointlog;
 
 SELECT u.*, m.user_id FROM uploadedfile u, member m WHERE u.file_id = m.user_img;
+
+SELECT * FROM member WHERE user_id = ? AND user_pwd = sha1(md5(?))
 

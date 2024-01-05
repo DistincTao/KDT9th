@@ -10,7 +10,7 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import com.jspminipjt.dto.MemberDto;
-import com.jspminipjt.etc.UploadedFile;
+import com.jspminipjt.dto.UploadedFileDto;
 import com.jspminipjt.vo.ImageVo;
 import com.jspminipjt.vo.MemberVo;
 
@@ -29,6 +29,7 @@ public class MemberDaoCRUD implements MemberDao {
 		return instance;
 	}
 
+	// ID 중복여부 확인
 	@Override
 	public MemberVo duplicateUserId(String userId) throws NamingException, SQLException {
 		MemberVo result = null;
@@ -76,7 +77,7 @@ public class MemberDaoCRUD implements MemberDao {
 			ImageVo vo = new ImageVo(rs.getInt("file_id"),
 									 rs.getString("original_filename"), 
 									 rs.getString("ext"), 
-									 rs.getString("new_filename"), 
+									  rs.getString("new_filename"), 
 									 rs.getLong("file_size"), 
 									 rs.getString("user_id"));
 			list.add(vo);
@@ -88,7 +89,7 @@ public class MemberDaoCRUD implements MemberDao {
 
 	// 파일이 있을 때 회원 가입 진행
 	@Override
-	public int registerMemberWithFile(UploadedFile uf, MemberDto dto, String pointType, int eachPoint)
+	public int registerMemberWithFile(UploadedFileDto uf, MemberDto dto, String pointType, int eachPoint)
 			throws SQLException, NamingException {
 		System.out.println("regist 호출");
 		Connection con = DBConnection.getInstance().dbConnect();
@@ -119,6 +120,7 @@ public class MemberDaoCRUD implements MemberDao {
 			con.rollback();
 		}
 		
+		con.setAutoCommit(true);
 		DBConnection.getInstance().dbClose(con);
 		
 		return result;
@@ -139,7 +141,7 @@ public class MemberDaoCRUD implements MemberDao {
 		dto.setUserPoint(eachPoint);
 		insertCnt = insertNewMember(dto, con);
 		// point 테이블에 회원가입 포인트 로그 남기기 (2) -2
-		if (insertCnt != -1) {
+		if (insertCnt == 1) {
 			String userId = dto.getUserId();
 			logCnt = insertPointLog(pointType, eachPoint, userId, con);
 		}
@@ -151,6 +153,7 @@ public class MemberDaoCRUD implements MemberDao {
 			con.rollback();
 		}
 		
+		con.setAutoCommit(true);
 		DBConnection.getInstance().dbClose(con);
 		
 		return result;
@@ -158,7 +161,7 @@ public class MemberDaoCRUD implements MemberDao {
 	}
 
 	@Override
-	public int insertUploadedFileInfo(UploadedFile uf, Connection con) throws SQLException, NamingException {
+	public int insertUploadedFileInfo(UploadedFileDto uf, Connection con) throws SQLException, NamingException {
 			
 		int result = -1;
 		PreparedStatement pstmt = null;
@@ -180,7 +183,7 @@ public class MemberDaoCRUD implements MemberDao {
 	}
 	
 	// 현재 업로드된 파일의 file_no를 select 해와서 반환
-	private int getUploadedFileId(Connection con, UploadedFile uf) throws SQLException {
+	private int getUploadedFileId(Connection con, UploadedFileDto uf) throws SQLException {
 		int fileNo = -1;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -231,6 +234,77 @@ public class MemberDaoCRUD implements MemberDao {
 
 		return result;
 	}
+	
+	
+	// 로그인 확인
+	@Override
+	public MemberVo loginMember(String userId, String userPwd) throws SQLException, NamingException {
+		System.out.println("login Dao 호출");
+		Connection con = DBConnection.getInstance().dbConnect();
+		MemberVo vo = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		String query = MemberDaoSql.SELECT_LOGIN_INFO;
+		
+		pstmt = con.prepareStatement(query);
+		pstmt.setString(1, userId);
+		pstmt.setString(2, userPwd);
+		rs = pstmt.executeQuery();
+		
+		while (rs.next()) {
+			vo = new MemberVo(rs.getString("user_id"),
+					          rs.getString("user_pwd"),
+					          rs.getString("user_email"),
+					          rs.getDate("regdate"),
+					          rs.getInt("user_img"),
+					          rs.getInt("user_point"),
+					          rs.getString("new_filename"),
+					          rs.getString("is_admin"));
+		}
+	
+		DBConnection.getInstance().dbClose(rs, pstmt, con);
+		return vo;
+	
+	}
+	
+	@Override
+	public int addPointToMember(String userId, String pointType, int point) throws SQLException, NamingException {
+		int result = -1;
+		int afterPointLog = -1;
+		
+		Connection con = DBConnection.getInstance().dbConnect();
+		con.setAutoCommit(false);
+		PreparedStatement pstmt = null;
+		String query = MemberDaoSql.UPDATE_POINT_LOGIN;
+		
+		pstmt = con.prepareStatement(query);
+		pstmt.setInt(1, MemberDaoSql.LOGIN);
+		pstmt.setString(2, userId);
+		
+		result = pstmt.executeUpdate();
+		DBConnection.getInstance().dbClose(pstmt);
+		
+		if (result == 1) {
+			//pointlog에 기록 남기기
+			afterPointLog = insertPointLog(pointType, MemberDaoSql.LOGIN, userId, con);
+			if (afterPointLog == 1) {
+				con.commit();
+				result = 1;
+			} else {
+				con.rollback();
+			}
+		} else {
+			con.rollback();
+		}
+		
+		con.setAutoCommit(true);
+		DBConnection.getInstance().dbClose(con);
+		
+		return result;
+	}
+	
+	
 
 	@Override
 	public int insertPointLog(String pointType, int eachPoint, String userId, Connection con) throws SQLException, NamingException {
@@ -249,5 +323,6 @@ public class MemberDaoCRUD implements MemberDao {
 		return result;
 		
 	}
+
 
 }

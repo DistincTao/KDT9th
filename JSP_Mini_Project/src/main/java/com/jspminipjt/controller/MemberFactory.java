@@ -3,11 +3,16 @@ package com.jspminipjt.controller;
 import com.jspminipjt.service.MemberService;
 import com.jspminipjt.service.member.ConfirmEmailCodeService;
 import com.jspminipjt.service.member.DuplicateUserIdService;
+import com.jspminipjt.service.member.LoginMemberService;
+import com.jspminipjt.service.member.LogoutMemberService;
 import com.jspminipjt.service.member.RegisterMemberService;
 import com.jspminipjt.service.member.SendMailService;
 
 public class MemberFactory {
 	private static MemberFactory instance;
+	
+	private boolean isRedirect;
+	private String whereToGo;
 	
 	public MemberFactory () {}
 	
@@ -19,6 +24,26 @@ public class MemberFactory {
 		return instance;
 	}
 	
+	public static void setInstance(MemberFactory instance) {
+		MemberFactory.instance = instance;
+	}
+
+	public void setRedirect(boolean isRedirect) {
+		this.isRedirect = isRedirect;
+	}
+
+	public void setWhereToGo(String whereToGo) {
+		this.whereToGo = whereToGo;
+	}
+
+	public boolean isRedirect() {
+		return isRedirect;
+	}
+
+	public String getWhereToGo() {
+		return whereToGo;
+	}
+
 	public MemberService getService(String command) {
 		MemberService result = null;
 		
@@ -30,6 +55,10 @@ public class MemberFactory {
 			result = new SendMailService();
 		} else if (command.equals("/member/confirmCode.mem")) {
 			result= new ConfirmEmailCodeService();
+		} else if (command.equals("/member/login.mem")) {
+			result = new LoginMemberService();
+		} else if (command.equals("/member/logout.mem")) {
+			result = new LogoutMemberService();
 		}
 		
 		return result;

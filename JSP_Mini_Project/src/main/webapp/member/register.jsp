@@ -6,6 +6,7 @@
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
 <c:set var = "contextPath" value="<%=request.getContextPath() %>"></c:set> 
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>

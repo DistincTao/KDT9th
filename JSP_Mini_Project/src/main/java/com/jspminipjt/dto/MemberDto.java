@@ -9,6 +9,8 @@ public class MemberDto {
 	private Date regdate; 
 	private int userImg;
 	private int userPoint;
+	
+	
 	public MemberDto() {
 		super();
 		// TODO Auto-generated constructor stub

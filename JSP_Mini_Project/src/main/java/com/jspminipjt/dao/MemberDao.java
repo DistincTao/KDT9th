@@ -7,7 +7,7 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import com.jspminipjt.dto.MemberDto;
-import com.jspminipjt.etc.UploadedFile;
+import com.jspminipjt.dto.UploadedFileDto;
 import com.jspminipjt.vo.ImageVo;
 import com.jspminipjt.vo.MemberVo;
 
@@ -18,13 +18,13 @@ public interface MemberDao {
 	public abstract List<ImageVo> selectAllImg() throws SQLException, NamingException;
 	// ===== 회원 가입 진행 Transaction ====== (C)
 	// 파일이 있을 때 회원 가입 진행 (1)
-	public abstract int registerMemberWithFile(UploadedFile uf, MemberDto dto, String pointType, int eachPoint) throws SQLException, NamingException;
+	public abstract int registerMemberWithFile(UploadedFileDto uf, MemberDto dto, String pointType, int eachPoint) throws SQLException, NamingException;
 	
 	// 파일이 없을 때 회원 가입 진행 (2)
 	public abstract int registerMemberWithoutFile(MemberDto dto, String pointType, int eachPoint) throws SQLException, NamingException;
 	
 	// 업로드된 파일의 정보를 uploadedFile  테이블에 insert (1) - 1
-	public abstract int insertUploadedFileInfo(UploadedFile uf, Connection con) throws SQLException, NamingException;
+	public abstract int insertUploadedFileInfo(UploadedFileDto uf, Connection con) throws SQLException, NamingException;
 	
 	// 회원 정보 insert (1) - 2  / (2) - 1
 	public abstract int insertNewMember (MemberDto dto, Connection con) throws SQLException, NamingException;
@@ -32,6 +32,11 @@ public interface MemberDao {
 	// point 테이블에 회원가입 포인트 로그 남기기 (1) - 3 / (2) -2
 	public abstract int insertPointLog(String pointType, int eachPoint, String userId, Connection con) throws SQLException, NamingException;
 	// ===================================
+	
+	// login 을 위한 아이디 비밀번호 가져오기
+	public abstract MemberVo loginMember(String userId, String userPwd) throws SQLException, NamingException;
+	// 아이디 비밀번호 확인 후 point 적립하기
+	public abstract int addPointToMember(String userId, String pointType, int point) throws SQLException, NamingException;
 	
 	// 전체 회원 정보 조회 (R)
 	// 아이디로 회원 정보 조회 (R)

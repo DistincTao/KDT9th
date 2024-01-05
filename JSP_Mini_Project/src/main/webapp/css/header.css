@@ -2,3 +2,7 @@
 .header {
 	background-image: url("../img/night.jpg");
 }
+#userImg {
+	width :30px;
+	height: 30px;
+}

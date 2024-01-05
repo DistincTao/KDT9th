@@ -9,9 +9,22 @@ public class MemberVo {
 	private Date regdate; 
 	private int userImg;
 	private int userPoint;
+	private String memberImg;
+	private String isAdmin;
+	
+	
 	public MemberVo() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+	
+	public MemberVo(String userId, String userPwd, String memberImg, String isAdmin) {
+		super();
+		this.userId = userId;
+		this.userPwd = userPwd;
+		this.memberImg = memberImg;
+		this.isAdmin = isAdmin;
+
 	}
 	
 	public MemberVo(String userId, String userPwd, String userEmail, Date regdate, int userImg, int userPoint) {
@@ -24,6 +37,21 @@ public class MemberVo {
 		this.userPoint = userPoint;
 	}
 	
+	
+	
+	public MemberVo(String userId, String userPwd, String userEmail, Date regdate, int userImg, int userPoint,
+			String memberImg, String isAdmin) {
+		super();
+		this.userId = userId;
+		this.userPwd = userPwd;
+		this.userEmail = userEmail;
+		this.regdate = regdate;
+		this.userImg = userImg;
+		this.userPoint = userPoint;
+		this.memberImg = memberImg;
+		this.isAdmin = isAdmin;
+	}
+
 	public String getUserId() {
 		return userId;
 	}
@@ -48,11 +76,21 @@ public class MemberVo {
 		return userPoint;
 	}
 	
+	public String getMemberImg() {
+		return memberImg;
+	}
+
+	public String getIsAdmin() {
+		return isAdmin;
+	}
+
 	@Override
 	public String toString() {
 		return "MemberVo [userId=" + userId + ", userPwd=" + userPwd + ", userEmail=" + userEmail + ", regdate="
-				+ regdate + ", userImg=" + userImg + ", userPoint=" + userPoint + "]";
+				+ regdate + ", userImg=" + userImg + ", userPoint=" + userPoint + ", memberImg=" + memberImg
+				+ ", isAdmin=" + isAdmin + "]";
 	}
-	
+
+
 	
 }

@@ -45,7 +45,12 @@ public class MemberServlet extends HttpServlet {
 		
 		MemberFactory mf = MemberFactory.getInstance();
 		MemberService service = mf.getService(command);
-		service.executeService(request, response);
+		if (service != null) {
+			mf = service.executeService(request, response);
+		}
+		if (mf != null && mf.isRedirect()) {
+			response.sendRedirect(mf.getWhereToGo());
+		}
 
 	}
 	
