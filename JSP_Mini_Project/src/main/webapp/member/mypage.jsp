@@ -40,8 +40,7 @@
 			<div class="card-body">
 				<h4 class="card-title">
 					User ID : ${sessionScope.login.userId }
-					<button type="button" class="btn btn-success" id="selectPwd">비밀
-						번호 수정</button>
+					<button type="button" class="btn btn-success" id="selectPwd">비밀 번호 수정</button>
 				</h4>
 				<div class="modifyPwd">
 					<div class="mb-3 mt-3">

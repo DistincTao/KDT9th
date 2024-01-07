@@ -14,8 +14,6 @@ import com.jspminipjt.dto.UploadedFileDto;
 import com.jspminipjt.vo.ImageVo;
 import com.jspminipjt.vo.MemberVo;
 
-
-
 public class MemberDaoCRUD implements MemberDao {
 	
 	private static MemberDaoCRUD instance = null;
@@ -82,7 +80,6 @@ public class MemberDaoCRUD implements MemberDao {
 									 rs.getString("user_id"));
 			list.add(vo);
 		}
-		
 		return list;
 	}
 	
