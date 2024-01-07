@@ -6,6 +6,7 @@
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
 <c:set var = "contextPath" value="<%=request.getContextPath() %>"></c:set> 
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -24,7 +25,7 @@
 
 <div class="container">
 	<h1>회원 가입</h1>
-	<form action="registerMember.mem" method="post">
+	<form action="registerMember.mem" method="post" enctype="multipart/form-data">
  		<div class="mb-3 mt-3">
     		<label for="userId" class="form-label">USER ID:</label>
     		<input type="text" class="form-control" id="userId" placeholder="Enter ID" name="userId">
@@ -42,20 +43,20 @@
    			<input type="text" class="form-control" id="userEmail" placeholder="Enter Email" name="userEmail">
   			<button type="button" class="btn btn-warning" id="emailValidBtn">Send Email</button>
   			<div class="codeDiv" style="display : none;">
-  				<input type="text" class="form-control" id="emailCode" placeholder="Enter Valification Code" name="emailCode">
+  				<input type="text" class="form-control" id="emailCode" placeholder="Enter Valification Code">
   				<button type="button" class="btn btn-success confirmCode">Varify Code</button>
   			</div>
  		</div>
   		<div class="mb-3 mt-3">
     		<label for="userImg" class="form-label">IMAGE:</label>
-   			<input type="file" class="form-control" id="userImg" placeholder="Enter Email" name="userImg">
+   			<input type="file" class="form-control" id="userImg" name="userImg">
  		</div>
  		
 <!--  		약관 추가  -->
  		
   		<div class="form-check mb-3 mt-3">
     		<label class="form-check-label">
-      		<input class="form-check-input" type="checkbox" name="agree" id="agree" value="Y"> 가입 조항에 동의 합니다.
+      		<input class="form-check-input" type="checkbox" name="agree" value="Y"> 가입 조항에 동의 합니다.
     		</label>
   		</div>
   			<button type="submit" class="btn btn-primary" id="signInBtn" onclick="return validCheck();">Submit</button>
