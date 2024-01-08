@@ -15,12 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
 
-import com.jspminipjt.controller.MemberFactory;
-import com.jspminipjt.dao.MemberDao;
-import com.jspminipjt.dao.MemberDaoCRUD;
+import com.jspminipjt.controller.member.MemberFactory;
+import com.jspminipjt.dao.member.MemberDao;
+import com.jspminipjt.dao.member.MemberDaoCRUD;
 import com.jspminipjt.etc.OutputJsonForError;
 import com.jspminipjt.service.MemberService;
-import com.jspminipjt.vo.MemberVo;
+import com.jspminipjt.vo.member.MemberVo;
 
 public class DuplicateUserIdService implements MemberService {
 

@@ -15,14 +15,14 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-import com.jspminipjt.controller.MemberFactory;
-import com.jspminipjt.dao.MemberDao;
-import com.jspminipjt.dao.MemberDaoCRUD;
-import com.jspminipjt.dao.MemberDaoSql;
-import com.jspminipjt.dto.MemberDto;
+import com.jspminipjt.controller.member.MemberFactory;
+import com.jspminipjt.dao.member.MemberDao;
+import com.jspminipjt.dao.member.MemberDaoCRUD;
+import com.jspminipjt.dao.member.MemberDaoSql;
 import com.jspminipjt.dto.UploadedFileDto;
+import com.jspminipjt.dto.member.MemberDto;
 import com.jspminipjt.service.MemberService;
-import com.jspminipjt.vo.ImageVo;
+import com.jspminipjt.vo.UploadFileVo;
 
 public class RegisterMemberService implements MemberService {
 	private static final int MEMORY_THRESHOLD = 1024 * 1024 * 5; // 하나의 파일블럭의 버퍼사이즈 (5MB)
@@ -97,7 +97,7 @@ public class RegisterMemberService implements MemberService {
 //					uploadedFile = getNewFileName(item, userId);
 
 					// 2) 파일명 (순서번호) + 확장자 => 과제로 짠것
-					List<ImageVo> voList = dao.selectAllImg(); // 내가짠거
+					List<UploadFileVo> voList = dao.selectAllImg(); // 내가짠거
 					uploadedFile = getNewFileNameWithSerial(item, voList); // 내가짠거
 
 					// 2) 파일명 (순서번호) + 확장자 => 수업시간
@@ -184,18 +184,19 @@ public class RegisterMemberService implements MemberService {
 //	}
 
 	// 2) 파일명 (순서번호) + 확장자 => 내가 짠 코드
-	private UploadedFileDto getNewFileNameWithSerial(FileItem item, List<ImageVo> list) {
+	private UploadedFileDto getNewFileNameWithSerial(FileItem item, List<UploadFileVo> list) {
 		UploadedFileDto upFile = null;
 		String newFileName = "";
 		String originalFileName = "";
 		String ext = "";
 		int cnt = 0;
-		for (ImageVo vo : list) {
+		for (UploadFileVo vo : list) {
 			if (item.getName().equals(vo.getOriginalFilename())) {
 				++cnt;
 			}
 			if (item.getSize() > 0) {
-				if (!item.getName().equals(vo.getOriginalFilename())) {
+				
+				if (!item.getName().equals(vo.getOriginalFilename()) || list == null) {
 					newFileName = item.getName();
 					originalFileName = item.getName();
 				} else {

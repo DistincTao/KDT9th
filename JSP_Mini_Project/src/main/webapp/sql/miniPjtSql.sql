@@ -72,5 +72,62 @@ SELECT * FROM pointlog;
 
 SELECT u.*, m.user_id FROM uploadedfile u, member m WHERE u.file_id = m.user_img;
 
-SELECT * FROM member WHERE user_id = ? AND user_pwd = sha1(md5(?))
+SELECT * FROM member WHERE user_id = ? AND user_pwd = sha1(md5(?));
+
+SELECT m.*, u.new_filename FROM member m, uploadedfile u WHERE m.user_img = u.file_id and user_id = ? AND user_pwd = sha1(md5(?));
+
+UPDATE member SET user_point = userPoint + ? WHERE user_id = ? 
+
+SELECT * FROM pointlog WHERE user_id = ?
+
+
+CREATE TABLE `distinctao`.`board` (
+  `board_no` INT NOT NULL,
+  `writer` VARCHAR(8) NULL,
+  `title` VARCHAR(45) NOT NULL,
+  `post_date` DATETIME NULL DEFAULT now(),
+  `content` VARCHAR(1000) NOT NULL,
+  `read_count` INT NULL DEFAULT 0,
+  `like_count` INT NULL DEFAULT 0,
+  `ref` INT NULL DEFAULT NULL,
+  `step` INT NULL DEFAULT 0,
+  `ref_order` INT NULL DEFAULT 0,
+  `isDelete` VARCHAR(1) NULL DEFAULT 'N',
+  PRIMARY KEY (`board_no`),
+  INDEX `board_writer_FK_idx` (`writer` ASC) VISIBLE,
+  CONSTRAINT `board_writer_FK`
+    FOREIGN KEY (`writer`)
+    REFERENCES `distinctao`.`member` (`user_id`)
+    ON DELETE SET NULL
+    ON UPDATE NO ACTION);
+
+
+ALTER TABLE `distinctao`.`uploadedfile` 
+ADD COLUMN `board_no` INT NULL DEFAULT NULL AFTER `file_size`,
+ADD COLUMN `base64String` LONGTEXT NULL DEFAULT NULL AFTER `board_no`,
+CHANGE COLUMN `original_filename` `original_filename` VARCHAR(100) NULL DEFAULT NULL ,
+CHANGE COLUMN `new_filename` `new_filename` VARCHAR(80) NULL DEFAULT NULL ,
+ADD INDEX `boare_no_FK_idx` (`board_no` ASC) VISIBLE;
+;
+ALTER TABLE `distinctao`.`uploadedfile` 
+ADD CONSTRAINT `uploadedfile_boare_no_FK`
+  FOREIGN KEY (`board_no`)
+  REFERENCES `distinctao`.`board` (`board_no`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+
+-- 게시판 전체 글 목록 가져오기
+SELECT * FROM board ORDER BY board_no DESC;
+
+SELECT MAX(board_no) + 1 as nextRef FROM board ; 
+
+INSERT INTO uploadedfile (original_filename, ext, new_filename, file_size, board_no) VALUES (?, ?, ?, ?, (SELECT MAX(b.board_no) + 1 as board_no FROM board b));
+
+INSERT INTO board (writer, title, post_date, content, ref) VALUES (?, ?, ?, ?, (SELECT MAX(b.board_no) + 1 as board_no FROM board b));
+
+Alter table member auto_increment = 1;
+Alter table board auto_increment = 1;
+Alter table uploadedfile auto_increment = 1;
+Alter table pointlog auto_increment = 1;
 

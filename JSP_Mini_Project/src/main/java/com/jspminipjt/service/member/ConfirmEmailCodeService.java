@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
 
-import com.jspminipjt.controller.MemberFactory;
+import com.jspminipjt.controller.member.MemberFactory;
 import com.jspminipjt.service.MemberService;
 
 public class ConfirmEmailCodeService implements MemberService {

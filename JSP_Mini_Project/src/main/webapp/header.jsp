@@ -31,26 +31,26 @@
         <a class="nav-link active" href="${contextPath }/index.jsp">distinctao</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="${contextPath }/member/board.jsp">Board</a>
+        <a class="nav-link" href="${contextPath }/board/listAll.bo">BOARD</a>
       </li>
 		<c:choose>
 			<c:when test="${sessionScope.login == null }" >
 		        <li class="nav-item">
-		            <a class="nav-link" href="${contextPath }/member/register.jsp">Sign In</a>
+		            <a class="nav-link" href="${contextPath }/member/register.jsp">SIGN IN</a>
 		        </li>
 		        <li class="nav-item">
-		            <a class="nav-link" href="${contextPath }/member/login.jsp">Log In</a>
+		            <a class="nav-link" href="${contextPath }/member/login.jsp">LOGIN</a>
 		     	    </li>
 			</c:when>
 		  	<c:otherwise>
 	     	    <li class="nav-item">
-	     	    	 <a class="nav-link" href="${contextPath }/member/mypage.jsp"> ${sessionScope.login.userId}
+	     	    	 <a class="nav-link" href="${contextPath }/member/myPage.mem?userId=${sessionScope.login.userId}"> ${sessionScope.login.userId}
 	     	    	 	<img src="${contextPath }/${sessionScope.login.memberImg }" id="userImg">
 	     	    	 </a>
 
 	     	    </li>
 		        <li class="nav-item">
-		            <a class="nav-link" href="${contextPath }/member/logout.mem">Log Out</a>
+		            <a class="nav-link" href="${contextPath }/member/logout.mem">LOGOUT</a>
 	     	    </li>  
 		  	</c:otherwise>
 		</c:choose>

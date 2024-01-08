@@ -9,12 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.jspminipjt.controller.MemberFactory;
-import com.jspminipjt.dao.MemberDao;
-import com.jspminipjt.dao.MemberDaoCRUD;
-import com.jspminipjt.dao.MemberDaoSql;
+import com.jspminipjt.controller.member.MemberFactory;
+import com.jspminipjt.dao.member.MemberDao;
+import com.jspminipjt.dao.member.MemberDaoCRUD;
+import com.jspminipjt.dao.member.MemberDaoSql;
 import com.jspminipjt.service.MemberService;
-import com.jspminipjt.vo.MemberVo;
+import com.jspminipjt.vo.member.MemberVo;
 
 public class LoginMemberService implements MemberService {
 
@@ -41,7 +41,9 @@ public class LoginMemberService implements MemberService {
 				vo = dao.loginMember(userId, userPwd);
 				sess.setAttribute("login", vo); // session에 로그인 유저 정보 바인딩
 				
-				request.getRequestDispatcher("../index.jsp").forward(request, response);
+//				request.getRequestDispatcher("../index.jsp").forward(request, response);
+				mf.setRedirect(true);
+				mf.setWhereToGo(request.getContextPath() + "/index.jsp?status=success");
 				
 			} else {
 				mf.setRedirect(true);
