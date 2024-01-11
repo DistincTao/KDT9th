@@ -53,7 +53,9 @@ public class LoginMemberService implements MemberService {
 			}
 			
 		} catch (SQLException | NamingException e) {
-			// TODO Auto-generated catch block
+			request.setAttribute("ErrorMsg", e.getMessage());
+			request.setAttribute("ErrorStack", e.getStackTrace());
+			request.getRequestDispatcher("../commonError.jsp").forward(request, response);
 			e.printStackTrace();
 		}
 		

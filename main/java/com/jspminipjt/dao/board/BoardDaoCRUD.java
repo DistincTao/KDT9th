@@ -10,7 +10,6 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import com.jspminipjt.dao.DBConnection;
-import com.jspminipjt.dao.member.MemberDaoSql;
 import com.jspminipjt.dto.UploadedFileDto;
 import com.jspminipjt.dto.board.BoardDto;
 import com.jspminipjt.vo.UploadFileVo;
@@ -471,7 +470,8 @@ public class BoardDaoCRUD implements BoardDao {
 	public int updateBoardTransactionWithFile(BoardDto dto, UploadedFileDto ufDto) throws NamingException, SQLException {
 		System.out.println(dto.getBoardNo() + "번 수정 진행 중");
 		int result = -1;
-		int boardCnt= -1;
+		int writeCnt = -1;
+		int fileCnt = -1;
 		Connection con = DBConnection.getInstance().dbConnect();
 		con.setAutoCommit(false);
 		PreparedStatement pstmt = null;
@@ -484,13 +484,15 @@ public class BoardDaoCRUD implements BoardDao {
 		pstmt.setString(2, dto.getContent());
 		pstmt.setInt(3, dto.getBoardNo());
 		
-		boardCnt = pstmt.executeUpdate();
-		
-		if (boardCnt == 1) {
+		writeCnt = pstmt.executeUpdate();
+		System.out.println("보드 수정 결과 " + writeCnt);
+		if (writeCnt == 1) {
 			// upload 파일 내용 수정
-			result = updateUploadedFileInfo(ufDto, con);
+			ufDto.setBoardNo(dto.getBoardNo());
+			fileCnt = updateUploadedFileInfo(ufDto, con);
 		}	
-		if (result == 1) {
+		if (writeCnt == 1 && fileCnt == 1) {
+			result = 1;
 			con.commit();
 		} else {
 			con.rollback();
@@ -500,16 +502,14 @@ public class BoardDaoCRUD implements BoardDao {
 		DBConnection.getInstance().dbClose(pstmt, con);
 		
 		return result;
-		
-		
 	}
 
 	@Override
 	public int updateUploadedFileInfo(UploadedFileDto ufDto, Connection con) throws NamingException, SQLException {
-		System.out.println("파일 정부 수정 진행 중");
+		System.out.println("파일 정보 수정 진행 중");
 		int result = -1;
 		PreparedStatement pstmt = null;
-		
+		System.out.println(ufDto.toString());
 		String query = BoardDaoSql.UPDATE_UPLOADEDFILE;
 		
 		pstmt = con.prepareStatement(query);
@@ -534,7 +534,7 @@ public class BoardDaoCRUD implements BoardDao {
 		Connection con = DBConnection.getInstance().dbConnect();
 		con.setAutoCommit(false);
 		PreparedStatement pstmt = null;
-		
+		System.out.println("Test 1");
 		String query = BoardDaoSql.UPDATE_BOARD;
 		
 		pstmt = con.prepareStatement(query);
@@ -544,6 +544,7 @@ public class BoardDaoCRUD implements BoardDao {
 		
 		result = pstmt.executeUpdate();
 		
+		System.out.println("Test 2");
 		if (result == 1) {
 			con.commit();
 		} else {
@@ -553,38 +554,150 @@ public class BoardDaoCRUD implements BoardDao {
 		con.setAutoCommit(true);
 		DBConnection.getInstance().dbClose(pstmt, con);
 		
+		return result;
+	}
+
+
+	@Override
+	public int insertReplyTransaction(BoardDto dto) throws NamingException, SQLException {
+		System.out.println("답글 등록 진행");
+			
+		Connection con = DBConnection.getInstance().dbConnect();
+		con.setAutoCommit(false);
+		int result = -1;
+		int refCnt = -1;
+		int replyCnt = -1;
+		int pointCnt = -1;
+		
+		refCnt = updateRefOrder(dto, con);
+		if (refCnt >= 0) {
+			replyCnt = insertReply(dto, con);
+		}
+		if (replyCnt == 1) {
+			pointCnt = addPointToMember(dto.getWriter(), "write_reply", BoardDaoSql.WRITE_REPLY, con);
+		}
+		
+		if (refCnt >= -1 && replyCnt == 1 && pointCnt == 1) {
+			result = 1;
+			con.commit();
+		} else {
+			con.rollback();
+		}
+		
+		
+		con.setAutoCommit(true);
+		DBConnection.getInstance().dbClose(con);
+		
+		return result;
+			
+	}
+	
+	private int insertReply(BoardDto dto, Connection con) throws SQLException {
+		int result = -1;
+		System.out.println("답글 DB에 저장 진행");
+
+		PreparedStatement pstmt = null;
+		
+		String query = BoardDaoSql.INSERT_REPLY;
+		
+		pstmt = con.prepareStatement(query);
+		pstmt.setString(1, dto.getWriter());
+		pstmt.setString(2, dto.getTitle());
+		pstmt.setString(3, dto.getContent());
+		pstmt.setInt(4, dto.getRef());
+		pstmt.setInt(5, dto.getStep() + 1);
+		pstmt.setInt(6, dto.getRefOrder() + 1);
+		
+		result = pstmt.executeUpdate();
+		
+		DBConnection.getInstance().dbClose(pstmt);
+		
+		return result;
+	}
+
+	private int updateRefOrder(BoardDto dto, Connection con) throws SQLException {
+		int result = -1;
+		System.out.println("ref Order 설정 진행");
+
+		PreparedStatement pstmt = null;
+		
+		String query = BoardDaoSql.UPDATE_REF_ORDER;
+		
+		pstmt = con.prepareStatement(query);
+		pstmt.setInt(1, dto.getRef());
+		pstmt.setInt(2, dto.getRefOrder());
+		
+		result = pstmt.executeUpdate();
+		
+		DBConnection.getInstance().dbClose(pstmt);
+
+		return result;
+	}
+	
+	@Override
+	public int updateBoardTransactionDeleteFile(BoardDto dto) throws NamingException, SQLException {
+		System.out.println("board 내용 수정 시 사진 삭제 진행");
+		int result = -1;
+		int updateCnt = -1;
+		int fileDelCnt = -1;
+		int boardNo = 0;
+		Connection con = DBConnection.getInstance().dbConnect();
+		con.setAutoCommit(false);
+
+		
+		boardNo = dto.getBoardNo();
+		updateCnt = updateBoardWithDelete(dto, con);
+		if (updateCnt == 1) {
+			fileDelCnt = deleteUploadedFile(boardNo, con);
+		}
+		
+		if (updateCnt == 1 && fileDelCnt == 1) {
+			result = 1;
+			con.commit();
+		} else {
+			con.rollback();
+		}
+		
+		con.setAutoCommit(true);
+		DBConnection.getInstance().dbClose(con);
 		return result;
 	}
 
 	@Override
-	public int deleteUploadedFile(String boardNo) throws NamingException, SQLException {
-		System.out.println("게시판 파일 삭제 진행");
+	public int deleteUploadedFile(int boardNo, Connection con) throws NamingException, SQLException {
+		System.out.println(boardNo + "번 게시판 파일 삭제 진행");
 		
 		int result = -1;
-		Connection con = DBConnection.getInstance().dbConnect();
-		con.setAutoCommit(false);
 		PreparedStatement pstmt = null;
-		
-		String query = "";
+		String query = BoardDaoSql.DELETE_UPLOADEDFILE;
 		
 		pstmt = con.prepareStatement(query);
-		pstmt.setString(1, boardNo);
-
+		pstmt.setInt(1, boardNo);
 		
 		result = pstmt.executeUpdate();
 		
-		if (result == 1) {
-			con.commit();
-		} else {
-			con.rollback();
-		}
-		
-		con.setAutoCommit(true);
-		DBConnection.getInstance().dbClose(pstmt, con);
-		
+		DBConnection.getInstance().dbClose(pstmt);
 		return result;
 		
 	}
 	
+	private int updateBoardWithDelete(BoardDto dto, Connection con) throws SQLException {
+		int result = -1;
+
+		PreparedStatement pstmt = null;
+		String query = BoardDaoSql.UPDATE_BOARD;
+		
+		pstmt = con.prepareStatement(query);
+		pstmt.setString(1, dto.getTitle());
+		pstmt.setString(2, dto.getContent());
+		pstmt.setInt(3, dto.getBoardNo());
+		
+		pstmt.executeUpdate();
+		
+		DBConnection.getInstance().dbClose(pstmt);
+
+		return result;
+	}
+
 	
 }

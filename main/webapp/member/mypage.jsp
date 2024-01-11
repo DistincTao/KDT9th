@@ -25,6 +25,12 @@
 <title>My Page</title>
 </head>
 <body>
+<!-- 로그인 하지 않은 유저는 login.jsp로 돌려보내기 -->
+<c:if test="${sessionScope.login == null }">
+	<c:redirect url="./login.jsp"></c:redirect>
+</c:if>	
+
+
 	<jsp:include page="../header.jsp"></jsp:include>
 
 	<div class="container">

@@ -7,6 +7,7 @@ import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.jspminipjt.controller.board.BoardFactory;
 import com.jspminipjt.dao.board.BoardDao;
@@ -14,6 +15,7 @@ import com.jspminipjt.dao.board.BoardDaoCRUD;
 import com.jspminipjt.service.BoardService;
 import com.jspminipjt.vo.UploadFileVo;
 import com.jspminipjt.vo.board.BoardVo;
+import com.jspminipjt.vo.member.MemberVo;
 
 public class GetBoardByNoService implements BoardService {
 
@@ -26,6 +28,7 @@ public class GetBoardByNoService implements BoardService {
 		BoardFactory bf = BoardFactory.getInstance();
 		BoardVo boardVo = null;
 		UploadFileVo fileVo = null;
+
 		// 클라이어트 ip 주소 얻어오기
 		String userIp = getIp(request);
 		int result = -1;
@@ -53,8 +56,14 @@ public class GetBoardByNoService implements BoardService {
 			
 			
 		} catch (SQLException | NamingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+//			e.getMessage(); // String으로 반환
+//			e.getStackTrace(); // Array로 반환
+			request.setAttribute("ErrorMsg", e.getMessage());
+			request.setAttribute("ErrorStack", e.getStackTrace());
+			request.getRequestDispatcher("../commonError.jsp").forward(request, response);
+
+			
 		}
 		
 

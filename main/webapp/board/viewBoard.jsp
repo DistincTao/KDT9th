@@ -45,21 +45,27 @@
                             <p class="fs-7 text-uppercase ">작성일 : ${requestScope.board.postDate }</p>
                             <div class="counts">
 	                            <div class="fs-7 text-uppercase"><img src="../img/book.png" style="width : 24px; height : 24px;"><span class="badge bg-primary">${requestScope.board.readCount }</span></div>
-	                            <div class="fs-7 text-uppercase"><i class="fa-regular fa-heart" style="width : 24px; height : 24px;" id="likeCnt"></i><span class="badge bg-primary">${requestScope.board.likeCount }</span></div>
+	                            <div class="fs-7 text-uppercase likeCnt"><i class="fa-regular fa-heart" style="width : 24px; height : 24px; color : red;" id="likeCnt"></i><span class="badge bg-primary">${requestScope.board.likeCount }</span></div>
                             </div>
-                            <div class="mb-3 fs-6 content">${requestScope.board.content }</div>
+                            <div class="mb-3 fs-6">${requestScope.board.content }</div>
                         </div>
                         <c:choose>
-                        	<c:when test="${sessionScope.login.userId.equals(requestScope.board.writer) }">
+                        	<c:when test="${sessionScope.login != null && (sessionScope.login.userId == requestScope.board.writer || sessionScope.login.isAdmin == 'Y') }">
 		                        <button type="button" class="btn btn-primary rounded-pill px-5" onclick="updateBoard()">Update</button>
 		                        <button type="button" class="btn btn-danger rounded-pill px-5" onclick="deleteBoard()">Delete</button>                        	
+ 		                        <button type="button" class="btn btn-warning rounded-pill px-5" onclick="location.href='replyBoard.jsp?ref=${requestScope.board.ref }&step=${requestScope.board.step }&refOrder=${requestScope.board.refOrder }'">Reply</button>
+                        	</c:when>
+                        	<c:when test="${sessionScope.login != null && sessionScope.login.userId != requestScope.board.writer }">
+		                        <button type="button" class="btn btn-primary rounded-pill px-5" disabled>Update</button>
+		                        <button type="button" class="btn btn-danger rounded-pill px-5" disabled >Delete</button>                        	
+ 		                        <button type="button" class="btn btn-warning rounded-pill px-5" onclick="location.href='replyBoard.jsp?ref=${requestScope.board.ref }&step=${requestScope.board.step }&refOrder=${requestScope.board.refOrder }'">Reply</button>
                         	</c:when>
                         	<c:otherwise>
 		                        <button type="button" class="btn btn-primary rounded-pill px-5" disabled>Update</button>
 		                        <button type="button" class="btn btn-danger rounded-pill px-5" disabled >Delete</button>                        	
+ 		                        <button type="button" class="btn btn-warning rounded-pill px-5" disabled>Reply</button>
                         	</c:otherwise>
                         </c:choose>
-                        
                         <a href="${contextPath }/board/listAll.bo" class="btn btn-success rounded-pill px-5">List</a>
                     </div> 
                 </div>
@@ -79,7 +85,7 @@
 
       <!-- Modal body -->
       <div class="modal-body">
-	<form action="updateBoard.bo" method="post" enctype="multipart/form-data">
+	<form id="deleteForm" action="updateBoard.bo" method="post" enctype="multipart/form-data">
  		<div class="mb-3 mt-3">
     		<label for="boardNo" class="form-label">NUMBER</label>
     		<input type="text" class="form-control" id="boardNo" name="boardNo" value="${requestScope.board.boardNo }" readonly>
@@ -97,7 +103,7 @@
    			<textarea rows="20" style="width : 100%" id="content" name="content">${requestScope.board.content }</textarea>
  		</div>
 		<div>
-			<input type="checkbox" name="fileDelete" id="fileDelete" value='Y'> 파일 삭제 
+			<input type="checkbox" name="fileDelete" id="fileDelete" value='delete'> 파일 삭제 
 		</div>
   		<div class="mb-3 mt-3" id="changeFile">
     		<label for="upFile" class="form-label">FILE</label>
@@ -125,7 +131,7 @@
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">게시판 수정</h4>
+        <h4 class="modal-title">게시판 삭제</h4>
         <button type="button" class="btn-close modalClose" data-bs-dismiss="modal"></button>
       </div>
 

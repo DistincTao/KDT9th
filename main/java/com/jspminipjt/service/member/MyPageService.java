@@ -41,7 +41,9 @@ public class MyPageService implements MemberService {
 			request.getRequestDispatcher("mypage.jsp").forward(request, response);
 			
 		} catch (SQLException | NamingException e) {
-			// TODO Auto-generated catch block
+			request.setAttribute("ErrorMsg", e.getMessage());
+			request.setAttribute("ErrorStack", e.getStackTrace());
+			request.getRequestDispatcher("../commonError.jsp").forward(request, response);
 			e.printStackTrace();
 		}
 		

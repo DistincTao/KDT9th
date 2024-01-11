@@ -151,3 +151,23 @@ update board set read_count = read_count + 1 where board_no = ?;
 SELECT b.* , u.new_filename FROM board b INNER JOIN uploadedfile u ON b.board_no = u.board_no WHERE board_no = ?;
 
 UPDATE board SET title = ?, content = ? WHERE board_no = ?;
+
+UPDATE uploadedfile SET original_filename = ?, ext = ?, new_filename = ?, file_size = ?, base64String = ? WHERE board_no = ?;
+
+-------------------------- 답글 처리 ----------------------------------
+
+SELECT * FROM board ORDER BY ref DESC, ref_order;
+
+-- 답글을 board table에 등록
+-- pRef == ref 이고, 
+
+
+Select ref from board where ref_order 
+
+Insert into board (writer, title, content, ref, step, ref_order)  values (?,?,?,board_no, step + 1, ref_order + 1);
+
+SELECT step, ref_order from board where board_no = ?;
+
+update board set ref_order = ref_order + 1 where ref_order = (Select ref_order from board where board_no = 1) < ref_order = (Select c.ref_order from board p, board c where p.board_no = c.ref);
+
+

@@ -7,7 +7,7 @@
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml"%>
 <c:set var="contextPath" value="<%=request.getContextPath()%>"></c:set>
 <c:set var="now" value="<%=new java.util.Date()%>" />
-
+<fmt:formatDate value="${board.postDate }" pattern="yyyy-MM-dd HH:m::ss"/>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -39,22 +39,36 @@
 
 						<c:forEach var="board" items="${boardList }">
 							<c:choose>
-								<c:when test="${board.isDelete == 'N' }">
+								<c:when test="${board.isDelete == 'N' && board.step == 0}">
 									<tr id="board${board.boardNo }" class="board" onclick="location.href='viewBoard.bo?boardNo=${board.boardNo}'">
 										<td>${board.boardNo }</td>
 										<td>${board.title }</td>
 										<td>${board.writer }</td>
-										<td>${board.postDate }</td>
+										<td><fmt:formatDate value="${board.postDate }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+										<td>${board.readCount }</td>
+									</tr>
+								</c:when>
+								<c:when test="${board.isDelete == 'N' && board.step != 0}">
+									<tr id="board${board.boardNo }" class="board" onclick="location.href='viewBoard.bo?boardNo=${board.boardNo}'">
+										<td>${board.boardNo }</td>
+										<td>
+											<c:forEach begin="1" end="${board.step}">
+												&nbsp; 
+											</c:forEach>
+											<img src="${contextPath }/img/arrow.png" style="width : 20px; height : 20px;"> ${board.title }
+										</td>
+										<td>${board.writer }</td>
+										<td><fmt:formatDate value="${board.postDate }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 										<td>${board.readCount }</td>
 									</tr>
 								</c:when>
 								<c:otherwise>
 									<tr id="board${board.boardNo }" class="deletedBoard">
-										<td><del>${board.boardNo }</del></td>
-										<td><del>${board.title }</del></td>
-										<td><del>${board.writer }</del></td>
-										<td><del>${board.postDate }</del></td>
-										<td><del>${board.readCount }</del></td>
+										<td></td>
+										<td>삭제된 글입니다.</td>
+										<td></td>
+										<td></td>
+										<td></td>
 									</tr>							
 								</c:otherwise>
 							</c:choose> 

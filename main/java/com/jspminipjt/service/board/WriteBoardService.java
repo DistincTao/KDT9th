@@ -103,13 +103,23 @@ public class WriteBoardService implements BoardService {
 			
 		} catch (FileUploadException e) {
 			// 파일이 업로드 될때의 예외
+			request.setAttribute("ErrorMsg", e.getMessage());
+			request.setAttribute("ErrorStack", e.getStackTrace());
+			request.getRequestDispatcher("../commonError.jsp").forward(request, response);
 			e.printStackTrace();
 		} catch (NamingException | SQLException e) {
 			//  파일 이름 변경시에 예외
+			request.setAttribute("ErrorMsg", e.getMessage());
+			request.setAttribute("ErrorStack", e.getStackTrace());
+			request.getRequestDispatcher("../commonError.jsp").forward(request, response);
 			e.printStackTrace();
 		}
 		
 		// ======== 게시판 내용 등록 진행 ==========
+		
+		
+		// 본문 저장 시 줄바꿈 처리를 해야한다.
+		content = content.replaceAll("\r\n", "<br>");
 		
 		BoardDto dto = new BoardDto(-1, writer, title, null, content, 0);
 		try { // 업로드된 파일이 있는 경우
@@ -126,6 +136,9 @@ public class WriteBoardService implements BoardService {
 			}
 			
 		} catch (NamingException | SQLException e) {
+			request.setAttribute("ErrorMsg", e.getMessage());
+			request.setAttribute("ErrorStack", e.getStackTrace());
+			request.getRequestDispatcher("../commonError.jsp").forward(request, response);
 			e.printStackTrace();
 			
 			// 업로드된 파일이 있다면 삭제해야 함

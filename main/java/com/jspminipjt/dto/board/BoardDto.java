@@ -9,8 +9,8 @@ public class BoardDto {
 	private Timestamp postDate;
 	private String content;
 	private int ref;
-
-	
+	private int step;
+	private int refOrder;
 	
 	public BoardDto() {
 		super();
@@ -30,6 +30,15 @@ public class BoardDto {
 	public BoardDto(int boardNo, String title, String content) {
 		super();
 		this.boardNo = boardNo;
+		this.title = title;
+		this.content = content;
+		
+	}
+	
+	public BoardDto(int boardNo, String writer, String title, String content) {
+		super();
+		this.boardNo = boardNo;
+		this.writer = writer;
 		this.title = title;
 		this.content = content;
 		
@@ -59,6 +68,13 @@ public class BoardDto {
 	}
 	
 	
+	
+	public int getStep() {
+		return step;
+	}
+	public int getRefOrder() {
+		return refOrder;
+	}
 	public void setBoardNo(int boardNo) {
 		this.boardNo = boardNo;
 	}
@@ -77,11 +93,21 @@ public class BoardDto {
 	public void setRef(int ref) {
 		this.ref = ref;
 	}
+	
+	
+	public void setStep(int step) {
+		this.step = step;
+	}
+	public void setRefOrder(int refOrder) {
+		this.refOrder = refOrder;
+	}
 	@Override
 	public String toString() {
-		return "BaordVo [writer=" + writer + ", title=" + title + ", postDate=" + postDate
-				+ ", content=" + content + ", ref=" + ref + "]";
+		return "BoardDto [boardNo=" + boardNo + ", writer=" + writer + ", title=" + title + ", postDate=" + postDate
+				+ ", content=" + content + ", ref=" + ref + ", step=" + step + ", refOrder=" + refOrder + "]";
 	}
+
+	
 	
 	
 	

@@ -4,6 +4,7 @@ import com.jspminipjt.service.BoardService;
 import com.jspminipjt.service.board.DeleteBoardService;
 import com.jspminipjt.service.board.GetBoardByNoService;
 import com.jspminipjt.service.board.GetEntireBoardService;
+import com.jspminipjt.service.board.ReplyBoardService;
 import com.jspminipjt.service.board.UpdateBoardService;
 import com.jspminipjt.service.board.WriteBoardService;
 
@@ -52,7 +53,11 @@ public class BoardFactory {
 			result = new UpdateBoardService();
 		} else if (command.equals("/board/deleteBoard.bo")) {
 			result = new DeleteBoardService();
+		} else if (command.equals("/board/replyBoard.bo")) {
+			result = new ReplyBoardService();
 		}
+		
+		
 		
 		return result;
 	}

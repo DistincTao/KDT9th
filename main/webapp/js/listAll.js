@@ -6,7 +6,7 @@ $(function (){
 		let output = "<span><img src='../img/new.png' class='new' style='width : 32px;'></span>";
 		let title = $(this).children().eq(1).html();
 		if (diff < 5) {
-			$(this).children().eq(1).html(output + " " + title);
+			$(this).children().eq(1).html(title + " " + output);
 		}
 	});
 

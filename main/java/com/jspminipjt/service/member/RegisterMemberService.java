@@ -120,10 +120,16 @@ public class RegisterMemberService implements MemberService {
 
 		} catch (FileUploadException e) {
 			// 파일이 업로드 될때의 예외
+			request.setAttribute("ErrorMsg", e.getMessage());
+			request.setAttribute("ErrorStack", e.getStackTrace());
+			request.getRequestDispatcher("../commonError.jsp").forward(request, response);
 			e.printStackTrace();
 		} 
 		catch (SQLException | NamingException e) { // 2) 중 내가 작성한 것에 해당하는 예외처리
 			// 파일이 업로드 될때의 예외
+			request.setAttribute("ErrorMsg", e.getMessage());
+			request.setAttribute("ErrorStack", e.getStackTrace());
+			request.getRequestDispatcher("../commonError.jsp").forward(request, response);
 			e.printStackTrace();
 		}
 		// ======= 회원 가입 진행 =======

@@ -37,6 +37,9 @@ public class GetEntireBoardService implements BoardService{
 			request.getRequestDispatcher("listAll.jsp").forward(request, response);
 			
 		} catch (NamingException | SQLException e) {
+			request.setAttribute("ErrorMsg", e.getMessage());
+			request.setAttribute("ErrorStack", e.getStackTrace());
+			request.getRequestDispatcher("../commonError.jsp").forward(request, response);
 			e.printStackTrace();
 		}
 		

@@ -35,6 +35,8 @@ public class UpdateBoardService implements BoardService {
 			throws ServletException, IOException {
 		System.out.println("Board 내용 수정 시작!!");
 		BoardFactory bf = BoardFactory.getInstance();
+		UploadedFileDto ufDto = null;
+		BoardDto dto = null;
 		BoardDao dao = BoardDaoCRUD.getInstance();
 
 		// 파일 업로드할 디렉토리 생성
@@ -45,65 +47,84 @@ public class UpdateBoardService implements BoardService {
 
 		int result = -1;
 		File saveFileDir = new File(realPath);
-		String boardNo = "";
-		String title = "";
-		String content = "";
-		UploadedFileDto ufDto = null;
-		BoardDto dto = new BoardDto();
+		String boardNo = request.getParameter("boardNo");
+		String writer = request.getParameter("writer");
+		String title = request.getParameter("title");
+		String content = request.getParameter("content");
 		String encoding = "utf-8";
 		String fileDelete = request.getParameter("fileDelete");
-		
+		System.out.println(boardNo + " " + title);
 		// 파일이 저장될 공간의 경로, 사이즈 등의 환경설정 정보를 가지고 있는 객체
 		DiskFileItemFactory diskFactory = new DiskFileItemFactory(MEMORY_THRESHOLD, saveFileDir);
 		
 		// 실제 request로 넘겨져온 매개변수를 통해 파일을 upload 처리할 객체 생성
 		ServletFileUpload sfu = new ServletFileUpload(diskFactory);
-
-		System.out.println("fileDelete : "  + fileDelete);
-		try {
-
-				List<FileItem> list = sfu.parseRequest(request);
-				for (FileItem file : list) {
-					System.out.println(file.toString());
-					
-					if (file.isFormField()) {
-						if (file.getFieldName().equals("boardNo")) {
-							boardNo = file.getString(encoding);
-						} else if (file.getFieldName().equals("title")) {
-							title = file.getString(encoding);
-						} else if (file.getFieldName().equals("content")) {
-							content = file.getString(encoding);
-						}
-					} else if (!file.isFormField() && file.getName() != ""){
-						// 업로드된 파일인 경우
-//					// 파일이름 중복 제거 =>  파일명 (순서번호) + 확장자
-						List<UploadFileVo> voList = dao.selectAllFile();
-						ufDto = getNewFileNameWithSerial(file, voList);
-						
-						// 파일을 하드디스크에 저장
-						File fileToSave = null;
-						fileToSave = new File(realPath + File.separator + ufDto.getNewFileName());
-						try {
-							file.write(fileToSave);
-							ufDto.setBase64String(makeImgToBase64String(realPath + File.separator + ufDto.getNewFileName()));
-							
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				} 
-
-			
-		} catch (FileUploadException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException | NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		// 게시판 등록 진행 후 사진 삭제
+		// 사진을 삭제 할 경우
+		if (fileDelete != null) {
+			try {
+				dto = new BoardDto(Integer.parseInt(boardNo), writer, title, content);
+				System.out.println(dto.toString());
+				result = dao.updateBoardTransactionDeleteFile(dto);
+				if (result == 1) {
+					System.out.println("글쓰기 성공!!");
+					bf.setRedirect(true);
+					bf.setWhereToGo(request.getContextPath() +"/board/viewBoard.bo?boardNo=" + dto.getBoardNo());
+				}
+			} catch (NamingException | SQLException e) {
+				request.setAttribute("ErrorMsg", e.getMessage());
+				request.setAttribute("ErrorStack", e.getStackTrace());
+				request.getRequestDispatcher("../commonError.jsp").forward(request, response);
+				e.printStackTrace();
+			}
+			return bf;
 		}
+
+		try {
+			List<FileItem> list = sfu.parseRequest(request);
+			for (FileItem file : list) {
+				System.out.println(file.toString());
+				
+				if (file.isFormField()) {
+					if (file.getFieldName().equals("boardNo")) {
+						boardNo = file.getString(encoding);
+					} else if (file.getFieldName().equals("title")) {
+						title = file.getString(encoding);
+					} else if (file.getFieldName().equals("content")) {
+						content = file.getString(encoding);
+					}
+				} else if (!file.isFormField() && file.getName() != ""){
+					// 업로드된 파일인 경우
+  //					// 파일이름 중복 제거 =>  파일명 (순서번호) + 확장자
+					List<UploadFileVo> voList = dao.selectAllFile();
+					ufDto = getNewFileNameWithSerial(file, voList);
+					
+					// 파일을 하드디스크에 저장
+					File fileToSave = null;
+					fileToSave = new File(realPath + File.separator + ufDto.getNewFileName());
+					try {
+						file.write(fileToSave);
+						ufDto.setBase64String(makeImgToBase64String(realPath + File.separator + ufDto.getNewFileName()));
+						
+					} catch (Exception e) {
+						request.setAttribute("ErrorMsg", e.getMessage());
+						request.setAttribute("ErrorStack", e.getStackTrace());
+						request.getRequestDispatcher("../commonError.jsp").forward(request, response);
+						e.printStackTrace();
+					}
+				}
+			} 
+			
+		} catch (FileUploadException | SQLException | NamingException e) {
+			request.setAttribute("ErrorMsg", e.getMessage());
+			request.setAttribute("ErrorStack", e.getStackTrace());
+			request.getRequestDispatcher("../commonError.jsp").forward(request, response);
+			e.printStackTrace();
+		} 
 		
 		// ============= 게시판 수정 진행 =====================
-
+		content = content.replaceAll("\r\n", "<br>");
+		
 		dto = new BoardDto(Integer.parseInt(boardNo), title, content);
 		System.out.println(dto.toString());
 		try { // 업로드된 파일이 있는 경우
@@ -113,7 +134,7 @@ public class UpdateBoardService implements BoardService {
 				System.out.println("Test : " + ufDto.toString());
 				result = dao.updateBoardTransactionWithFile(dto, ufDto);
 				System.out.println(result + " => 결과 with 파일");
-			} else { // 업호드도니 파일이 없는 경우
+			} else { // 업로드된 파일이 없는 경우
 				result = dao.updateBoardTransactionWithoutFile(dto);
 				System.out.println(result + " => 결과 without 파일");
 			}
@@ -121,11 +142,12 @@ public class UpdateBoardService implements BoardService {
 				System.out.println("글쓰기 성공!!");
 				bf.setRedirect(true);
 				bf.setWhereToGo(request.getContextPath() +"/board/viewBoard.bo?boardNo=" + dto.getBoardNo());
-
 			}
 			
 		} catch (NamingException | SQLException e) {
-			// TODO Auto-generated catch block
+			request.setAttribute("ErrorMsg", e.getMessage());
+			request.setAttribute("ErrorStack", e.getStackTrace());
+			request.getRequestDispatcher("../commonError.jsp").forward(request, response);
 			e.printStackTrace();
 			
 			// 업로드된 파일이 있다면 삭제해야 함
@@ -137,12 +159,13 @@ public class UpdateBoardService implements BoardService {
 			
 			// 글 작성 중 예외 발생 시 => 게시판 페이지로 이동
 			bf.setRedirect(true);
-			bf.setWhereToGo(request.getContextPath() +"/board/viewBoard.bo?boardNo=" + dto.getBoardNo());
+			bf.setWhereToGo(request.getContextPath() +"/board/writeBoard.jsp?status=fail");
 			
 			return bf;
 		}
-		
-		
+
+		bf.setRedirect(true);
+		bf.setWhereToGo(request.getContextPath() +"/board/viewBoard.bo?boardNo=" + dto.getBoardNo());
 		return bf;
 	}
 

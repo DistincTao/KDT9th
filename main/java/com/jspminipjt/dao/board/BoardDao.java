@@ -52,7 +52,11 @@ public interface BoardDao {
 	public abstract int updateBoardTransactionWithoutFile(BoardDto dto) throws NamingException, SQLException;
 	// board 업로드 파일 내용 수정
 	public abstract int updateUploadedFileInfo(UploadedFileDto ufDto, Connection con) throws NamingException, SQLException;
+	// board 내용 update (사진 삭제 요청)
+	public abstract int updateBoardTransactionDeleteFile(BoardDto dto) throws NamingException, SQLException;
 	// board 파일 삭제
-	public abstract int deleteUploadedFile(String boardNo)  throws NamingException, SQLException;
+	public abstract int deleteUploadedFile(int boardNo, Connection con) throws NamingException, SQLException;
+	// reply 작성
+	public abstract int insertReplyTransaction(BoardDto dto) throws NamingException, SQLException;
 
 }
