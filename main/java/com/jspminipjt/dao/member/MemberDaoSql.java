@@ -17,7 +17,7 @@ public class MemberDaoSql {
 	public static final String SELECT_POINTLOG = "SELECT * FROM pointlog";
 	public static final String SELECT_LOGIN_INFO = "SELECT m.*, u.new_filename FROM member m, uploadedfile u WHERE m.user_img = u.file_id and user_id = ? AND user_pwd = sha1(md5(?))";
 	public static final String UPDATE_POINT_LOGIN = "UPDATE member SET user_point = user_point + ? WHERE user_id = ?";
-	public static final String SELECT_USER_POINTLOG = "SELECT * FROM pointlog WHERE user_id = ?";
+	public static final String SELECT_USER_POINTLOG = "SELECT * FROM pointlog WHERE user_id = ? LIMIT ? , ?";
 	public static final String SELECT_LOGIN_USER_INFO = "SELECT m.*, u.new_filename FROM member m, uploadedfile u WHERE m.user_img = u.file_id AND m.user_id = ?";
 	
 }

@@ -12,6 +12,7 @@ import javax.naming.NamingException;
 import com.jspminipjt.dao.DBConnection;
 import com.jspminipjt.dto.UploadedFileDto;
 import com.jspminipjt.dto.member.MemberDto;
+import com.jspminipjt.vo.PagingInfoVo;
 import com.jspminipjt.vo.UploadFileVo;
 import com.jspminipjt.vo.member.MemberPointVo;
 import com.jspminipjt.vo.member.MemberVo;
@@ -354,7 +355,7 @@ public class MemberDaoCRUD implements MemberDao {
 	}
 
 	@Override
-	public List<MemberPointVo> getMemberPointInfo(String userId) throws SQLException, NamingException {
+	public List<MemberPointVo> getMemberPointInfo(String userId, PagingInfoVo paging) throws SQLException, NamingException {
 		List<MemberPointVo> volist = new ArrayList<>();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -364,6 +365,8 @@ public class MemberDaoCRUD implements MemberDao {
 		
 		pstmt = con.prepareStatement(query);
 		pstmt.setString(1, userId);
+		pstmt.setInt(2, paging.getStartRowIndex());
+		pstmt.setInt(3, paging.getPagePostCnt());
 		
 		rs = pstmt.executeQuery();
 		

@@ -12,6 +12,7 @@ import javax.naming.NamingException;
 import com.jspminipjt.dao.DBConnection;
 import com.jspminipjt.dto.UploadedFileDto;
 import com.jspminipjt.dto.board.BoardDto;
+import com.jspminipjt.vo.PagingInfoVo;
 import com.jspminipjt.vo.UploadFileVo;
 import com.jspminipjt.vo.board.BoardVo;
 
@@ -44,11 +45,12 @@ public class BoardDaoCRUD implements BoardDao {
 			boardNo = rs.getInt("board_no");
 		}
 
+		DBConnection.getInstance().dbClose(rs, pstmt, con);
 		return boardNo;
 	}
 
 	@Override
-	public List<BoardVo> selectAllBoard() throws NamingException, SQLException {
+	public List<BoardVo> selectAllBoard(PagingInfoVo paging) throws NamingException, SQLException {
 		List<BoardVo> list = new ArrayList<>();
 		BoardVo vo = null;
 
@@ -56,9 +58,11 @@ public class BoardDaoCRUD implements BoardDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
-		String query = BoardDaoSql.SELECT_ALL_BOARD_LIST;
+		String query = BoardDaoSql.SELECT_ALL_BOARD_BY_PAGING;
 
 		pstmt = con.prepareStatement(query);
+		pstmt.setInt(1, paging.getStartRowIndex());
+		pstmt.setInt(2, paging.getPagePostCnt());
 		rs = pstmt.executeQuery();
 
 		while (rs.next()) {
@@ -73,6 +77,35 @@ public class BoardDaoCRUD implements BoardDao {
 		DBConnection.getInstance().dbClose(rs, pstmt, con);
 		return list;
 
+	}
+	
+	@Override
+	public List<BoardVo> selectAllBoard() throws NamingException, SQLException {
+		List<BoardVo> list = new ArrayList<>();
+		BoardVo vo = null;
+		
+		Connection con = DBConnection.getInstance().dbConnect();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		String query = BoardDaoSql.SELECT_ALL_BOARD_LIST;
+		
+		pstmt = con.prepareStatement(query);
+
+		rs = pstmt.executeQuery();
+		
+		while (rs.next()) {
+			vo = new BoardVo(rs.getInt("board_no"), rs.getString("writer"), rs.getString("title"),
+					rs.getTimestamp("post_date"), rs.getString("content"), rs.getInt("read_count"),
+					rs.getInt("like_count"), rs.getInt("ref"), rs.getInt("step"), rs.getInt("ref_order"),
+					rs.getString("isDelete"));
+			
+			list.add(vo);
+		}
+		
+		DBConnection.getInstance().dbClose(rs, pstmt, con);
+		return list;
+		
 	}
 
 	@Override
@@ -93,18 +126,18 @@ public class BoardDaoCRUD implements BoardDao {
 		// 게시판에 저장
 		dto.setRef(ref);
 		writeCnt = insertNewBoardContent(dto, con);
-		if (writeCnt != -1) {
+		if (writeCnt >= 1) {
 		// 파일 저장
 			ufDto.setBoardNo(ref);
 			fileCnt = insertUploadedFileInfo(ufDto, con);
 		}
 		// 포인트 추가
-		if (fileCnt != -1) {
+		if (fileCnt >= 1) {
 			userId = dto.getWriter();
 			pointCnt = addPointToMember(userId, pointType, eachPoint, con);
 		}
 		// 포인트 로그 저장
-		if (writeCnt == 1 && fileCnt == 1 && pointCnt == 1 && fileCnt == 1) {
+		if (writeCnt >= 1 && fileCnt >= 1 && pointCnt >= 1 && fileCnt >= 1) {
 			logCnt = insertPointLog(pointType, eachPoint, userId, con);
 			result = 1;
 			con.commit();
@@ -131,12 +164,12 @@ public class BoardDaoCRUD implements BoardDao {
 		// 게시판에 저장
 		writeCnt = insertNewBoardContent(dto, con);
 		// 포인트 추가
-		if (writeCnt != -1) {
+		if (writeCnt >= 1) {
 			String userId = dto.getWriter();
 			pointCnt = addPointToMember(userId, pointType, eachPoint, con);
 		}
 		// 포인트 로그 저장
-		if (writeCnt == 1 && pointCnt == 1) {
+		if (writeCnt >= 1 && pointCnt >= 1) {
 			result = 1;
 			con.commit();
 		} else {
@@ -349,7 +382,7 @@ public class BoardDaoCRUD implements BoardDao {
 
 		}
 		
-		if (result != -1) {
+		if (result >= 1) {
 			System.out.println("조회수 반영 완료");
 			con.commit();
 		} else {
@@ -455,7 +488,7 @@ public class BoardDaoCRUD implements BoardDao {
 		
 		result = pstmt.executeUpdate();
 		
-		if (result == 1 ) {
+		if (result >= 1 ) {
 			con.commit();
 		} else {
 			con.rollback();
@@ -467,7 +500,7 @@ public class BoardDaoCRUD implements BoardDao {
 	}
 
 	@Override
-	public int updateBoardTransactionWithFile(BoardDto dto, UploadedFileDto ufDto) throws NamingException, SQLException {
+	public int updateBoardTransactionWithFile(BoardDto dto, UploadedFileDto ufDto, String existFile) throws NamingException, SQLException {
 		System.out.println(dto.getBoardNo() + "번 수정 진행 중");
 		int result = -1;
 		int writeCnt = -1;
@@ -486,12 +519,21 @@ public class BoardDaoCRUD implements BoardDao {
 		
 		writeCnt = pstmt.executeUpdate();
 		System.out.println("보드 수정 결과 " + writeCnt);
-		if (writeCnt == 1) {
+		System.out.println("existFile 정보 들어오나?  " + existFile);
+		ufDto.setBoardNo(dto.getBoardNo());
+		if (writeCnt >= 1) {
 			// upload 파일 내용 수정
-			ufDto.setBoardNo(dto.getBoardNo());
-			fileCnt = updateUploadedFileInfo(ufDto, con);
+			if (!existFile.equals("") && existFile != null) {
+				System.out.println("파일정보 업데이트 ");
+
+				fileCnt = updateUploadedFileInfo(ufDto, con);				
+			} else {
+				System.out.println("파일정보 신규 추가");
+
+				fileCnt = insertUploadedFileInfo(ufDto, con);
+			}
 		}	
-		if (writeCnt == 1 && fileCnt == 1) {
+		if (writeCnt >= 1 && fileCnt >= 1) {
 			result = 1;
 			con.commit();
 		} else {
@@ -522,6 +564,7 @@ public class BoardDaoCRUD implements BoardDao {
 		
 		result = pstmt.executeUpdate();
 		
+		System.out.println("파일정보 수정 결과 : " + result);
 		DBConnection.getInstance().dbClose(pstmt);
 
 		return result;
@@ -531,6 +574,7 @@ public class BoardDaoCRUD implements BoardDao {
 	public int updateBoardTransactionWithoutFile(BoardDto dto) throws NamingException, SQLException {
 		System.out.println(dto.getBoardNo() + "번 수정 진행 중");
 		int result = -1;
+		int deletFileCnt = -1;
 		Connection con = DBConnection.getInstance().dbConnect();
 		con.setAutoCommit(false);
 		PreparedStatement pstmt = null;
@@ -545,7 +589,10 @@ public class BoardDaoCRUD implements BoardDao {
 		result = pstmt.executeUpdate();
 		
 		System.out.println("Test 2");
-		if (result == 1) {
+		if (result >= 1) {
+			deletFileCnt = deleteUploadedFile(dto.getBoardNo(), con);
+		}
+		if (result >= 1 && deletFileCnt >= 1) {
 			con.commit();
 		} else {
 			con.rollback();
@@ -573,11 +620,11 @@ public class BoardDaoCRUD implements BoardDao {
 		if (refCnt >= 0) {
 			replyCnt = insertReply(dto, con);
 		}
-		if (replyCnt == 1) {
+		if (replyCnt >= 1) {
 			pointCnt = addPointToMember(dto.getWriter(), "write_reply", BoardDaoSql.WRITE_REPLY, con);
 		}
 		
-		if (refCnt >= -1 && replyCnt == 1 && pointCnt == 1) {
+		if (refCnt >= -1 && replyCnt >= 1 && pointCnt >= 1) {
 			result = 1;
 			con.commit();
 		} else {
@@ -647,11 +694,11 @@ public class BoardDaoCRUD implements BoardDao {
 		
 		boardNo = dto.getBoardNo();
 		updateCnt = updateBoardWithDelete(dto, con);
-		if (updateCnt == 1) {
+		if (updateCnt >= 1) {
 			fileDelCnt = deleteUploadedFile(boardNo, con);
 		}
 		
-		if (updateCnt == 1 && fileDelCnt == 1) {
+		if (updateCnt >= 1 && fileDelCnt >= 1) {
 			result = 1;
 			con.commit();
 		} else {
@@ -697,6 +744,26 @@ public class BoardDaoCRUD implements BoardDao {
 		DBConnection.getInstance().dbClose(pstmt);
 
 		return result;
+	}
+
+	@Override
+	public int getTotalPostCnt() throws NamingException, SQLException {
+		int totalPostCnt = 0;
+		Connection con = DBConnection.getInstance().dbConnect();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		String query = BoardDaoSql.SELECT_TOTALPOST;
+
+		pstmt = con.prepareStatement(query);
+		rs = pstmt.executeQuery();
+
+		while (rs.next()) {
+			totalPostCnt = rs.getInt("total_post");
+		}
+
+		DBConnection.getInstance().dbClose(rs, pstmt, con);
+		return totalPostCnt;
 	}
 
 	

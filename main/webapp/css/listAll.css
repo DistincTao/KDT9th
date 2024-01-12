@@ -3,3 +3,6 @@
 .deletedBoard {
 	background: gray;
 }
+.pagination {
+	justify-content: center;
+} 

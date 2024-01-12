@@ -3,3 +3,7 @@
 .modifyPwd, #modifyImg, #modifyEmail, #codeDiv {
 	display : none;
 }
+
+.pagination {
+	justify-content: center;
+} 

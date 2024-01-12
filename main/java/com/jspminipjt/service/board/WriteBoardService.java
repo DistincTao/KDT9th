@@ -96,6 +96,9 @@ public class WriteBoardService implements BoardService {
 						ufDto.setBase64String(makeImgToBase64String(realPath + File.separator + ufDto.getNewFileName()));
 						
 					} catch (Exception e) {
+						request.setAttribute("ErrorMsg", e.getMessage());
+						request.setAttribute("ErrorStack", e.getStackTrace());
+						request.getRequestDispatcher("../commonError.jsp").forward(request, response);
 						e.printStackTrace();
 					}
 				}

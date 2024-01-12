@@ -40,29 +40,20 @@
 				src="${contextPath }/${requestScope.memberInfo.memberImg }">
 		</div>
 		<div class="mb-3 mt-3">
-			<label for="userImg" class="form-label">change image</label> <input
-				type="file" class="form-control" id="userImg" name="userImg">
+			<label for="userImg" class="form-label">Change Image</label>
+			 <input type="file" class="form-control" id="userImg" name="userImg">
 		</div>
 		<div class="mb-3 mt-3">
 			<div class="input-group mb-3">
-				<input type="text" class="form-control" id="userId" readonly
-					value="${requestScope.memberInfo.userId }">
-				<button class="btn btn-success" type="button" id="changePwdBtn">change
-					PW</button>
+				<input type="text" class="form-control" id="userId" readonly value="${requestScope.memberInfo.userId }">
+				<button class="btn btn-success" type="button" id="changePwdBtn">Change PW</button>
 			</div>
 		</div>
 
 		<div class="mb-3 mt-3">
 			<div class="input-group mb-3">
-				<input type="text" class="form-control" readonly
-					value="${requestScope.memberInfo.userEmail }">
+				<input type="text" class="form-control" readonly value="${requestScope.memberInfo.userEmail }">
 				<button class="btn btn-success" type="submit" id="changEmailBtn">Change</button>
-			</div>
-			<div class="codeDiv" style="display: none;">
-				<input type="text" class="form-control" id="emailCode"
-					placeholder="Enter Valification Code" name="userImg">
-				<button type="button" class="btn btn-warning confirmCode">
-					Check Code</button>
 			</div>
 		</div>
 		
@@ -91,6 +82,43 @@
 					</c:forEach>
 				</tbody>
 			</table>
+			
+			<ul class="pagination">
+		<c:choose>
+			<c:when test="${param.pageNo == 1 || param.pageNo == null}">
+				<li class="page-item disabled"><a class="page-link" href="#" >Previous</a></li>
+			</c:when>
+			<c:otherwise>			
+				<li class="page-item"><a class="page-link" href="myPage.mem?userId=${requestScope.memberInfo.userId }&pageNo=${requestScope.pageInfo.pageNo - 1 }">Previous</a></li>
+			</c:otherwise>
+		</c:choose>
+		
+		<c:forEach var="paging" begin="${requestScope.pageInfo.startPageNum }" end="${requestScope.pageInfo.endPageNum }">
+			<c:choose>
+			<c:when test="${param.pageNo == paging}">
+				<li class="page-item active"><a class="page-link" href="myPage.mem?userId=${requestScope.memberInfo.userId }&pageNo=${paging }">${paging }</a></li>
+			</c:when>
+			<c:when test="${param.pageNo == null && paging == 1}">
+				<li class="page-item active"><a class="page-link" href="myPage.mem?userId=${requestScope.memberInfo.userId }&pageNo=${paging }">${paging }</a></li>
+			</c:when>
+			<c:otherwise>
+				<li class="page-item"><a class="page-link" href="myPage.mem?userId=${requestScope.memberInfo.userId }&pageNo=${paging }">${paging }</a></li>
+			</c:otherwise>
+			</c:choose>
+		</c:forEach>
+		<c:choose>
+			<c:when test="${param.pageNo < requestScope.pageInfo.totalPageCnt }">
+				<li class="page-item "><a class="page-link" href="myPage.mem?userId=${requestScope.memberInfo.userId }&pageNo=${param.pageNo + 1}">Next</a></li>
+			</c:when>
+			<c:when test="${param.pageNo == null}">
+				<li class="page-item "><a class="page-link" href="myPage.mem?userId=${requestScope.memberInfo.userId }&pageNo=2">Next</a></li>
+			</c:when>
+			<c:otherwise>			
+				<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+			</c:otherwise>
+		</c:choose>
+
+		</ul>
 		</div>
 		
 		<!-- The Modal -->

@@ -8,12 +8,14 @@ import javax.naming.NamingException;
 
 import com.jspminipjt.dto.UploadedFileDto;
 import com.jspminipjt.dto.board.BoardDto;
+import com.jspminipjt.vo.PagingInfoVo;
 import com.jspminipjt.vo.UploadFileVo;
 import com.jspminipjt.vo.board.BoardVo;
 
 public interface BoardDao {
 	// 게시판 전체 글 목록
 	public abstract List<BoardVo> selectAllBoard() throws NamingException, SQLException;
+	public abstract List<BoardVo> selectAllBoard(PagingInfoVo PageInfo) throws NamingException, SQLException;
 	// 게시판 글 저장 (업로드 파일이 있는 경우)
 	public abstract int insertBoardTransactionWithFile(BoardDto dto, UploadedFileDto ufDto, String pointType, int eachPoint) throws NamingException, SQLException;
 	// 게시판 글 저장 (업로드 파일이 없는 경우)
@@ -47,7 +49,7 @@ public interface BoardDao {
 	// board isDelete update
 	public abstract int deletBoard(int boardNo) throws NamingException, SQLException;
 	// board 내용 update with File
-	public abstract int updateBoardTransactionWithFile(BoardDto dto, UploadedFileDto ufDto) throws NamingException, SQLException;
+	public abstract int updateBoardTransactionWithFile(BoardDto dto, UploadedFileDto ufDto, String existFile) throws NamingException, SQLException;
 	// board 내용 update without File
 	public abstract int updateBoardTransactionWithoutFile(BoardDto dto) throws NamingException, SQLException;
 	// board 업로드 파일 내용 수정
@@ -58,5 +60,7 @@ public interface BoardDao {
 	public abstract int deleteUploadedFile(int boardNo, Connection con) throws NamingException, SQLException;
 	// reply 작성
 	public abstract int insertReplyTransaction(BoardDto dto) throws NamingException, SQLException;
+	// 총 페이지수 가져오기
+	public abstract int getTotalPostCnt()  throws NamingException, SQLException;
 
 }

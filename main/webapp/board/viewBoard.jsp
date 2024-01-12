@@ -86,6 +86,7 @@
       <!-- Modal body -->
       <div class="modal-body">
 	<form id="deleteForm" action="updateBoard.bo" method="post" enctype="multipart/form-data">
+ 		<input type="hidden" name="existFile" value="${requestScope.file.newFilename }">
  		<div class="mb-3 mt-3">
     		<label for="boardNo" class="form-label">NUMBER</label>
     		<input type="text" class="form-control" id="boardNo" name="boardNo" value="${requestScope.board.boardNo }" readonly>

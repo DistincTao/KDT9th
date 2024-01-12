@@ -75,15 +75,54 @@
 						</c:forEach>
 					</tbody>
 				</table>
+								
 			</c:when>
 			<c:otherwise>
 				텅!!!
 			</c:otherwise>
 		</c:choose>
-		</div>
 		<div class="btns">
 			<button type="button" class="btn btn-primary" onclick="location.href='writeBoard.jsp'">글쓰기</button>
 		</div>
+
+		<ul class="pagination">
+		<c:choose>
+			<c:when test="${param.pageNo == 1 || param.pageNo == null}">
+				<li class="page-item disabled"><a class="page-link" href="#" >Previous</a></li>
+			</c:when>
+			<c:otherwise>			
+				<li class="page-item"><a class="page-link" href="listAll.bo?pageNo=${param.pageNo - 1}">Previous</a></li>
+			</c:otherwise>
+		</c:choose>
+		
+		<c:forEach var="paging" begin="${requestScope.pageInfo.startPageNum }" end="${requestScope.pageInfo.endPageNum }">
+			<c:choose>
+			<c:when test="${param.pageNo == paging}">
+				<li class="page-item active"><a class="page-link" href="listAll.bo?pageNo=${paging }">${paging }</a></li>
+			</c:when>
+			<c:when test="${param.pageNo == null && paging == 1}">
+				<li class="page-item active"><a class="page-link" href="listAll.bo?pageNo=${paging }">${paging }</a></li>
+			</c:when>
+			<c:otherwise>
+				<li class="page-item"><a class="page-link" href="listAll.bo?pageNo=${paging }">${paging }</a></li>
+			</c:otherwise>
+			</c:choose>
+		</c:forEach>
+		<c:choose>
+			<c:when test="${param.pageNo < requestScope.pageInfo.totalPageCnt }">
+				<li class="page-item "><a class="page-link" href="listAll.bo?pageNo=${param.pageNo + 1}">Next</a></li>
+			</c:when>
+			<c:when test="${param.pageNo == null}">
+				<li class="page-item "><a class="page-link" href="listAll.bo?pageNo=2">Next</a></li>
+			</c:when>
+			<c:otherwise>			
+				<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+			</c:otherwise>
+		</c:choose>
+
+		</ul>
+		</div>
+
 
 	</div>
 

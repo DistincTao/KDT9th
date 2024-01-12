@@ -12,7 +12,6 @@ $(function() {
 	$("#fileDelete").change(function() {
 		if ($("input[type=checkbox][name=fileDelete]:checked").val() == 'delete'){
 			$("#changeFile").hide()
-			$("#deleteForm").attr("enctype", "application/x-www-form-urlencoded")
 		} else {
 			$("#changeFile").show()
 		}

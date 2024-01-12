@@ -8,6 +8,7 @@ import javax.naming.NamingException;
 
 import com.jspminipjt.dto.UploadedFileDto;
 import com.jspminipjt.dto.member.MemberDto;
+import com.jspminipjt.vo.PagingInfoVo;
 import com.jspminipjt.vo.UploadFileVo;
 import com.jspminipjt.vo.member.MemberPointVo;
 import com.jspminipjt.vo.member.MemberVo;
@@ -41,7 +42,7 @@ public interface MemberDao {
 	// 해당 아이디 맴버 정보 가져오기ㅏ
 	public abstract MemberVo getMemberInfo(String userId)throws SQLException, NamingException;
 	// 해당 맴버의 포인트 기록 가져오기
-	public abstract List<MemberPointVo> getMemberPointInfo(String userId)throws SQLException, NamingException;
+	public abstract List<MemberPointVo> getMemberPointInfo(String userId, PagingInfoVo paging)throws SQLException, NamingException;
 
 	
 	

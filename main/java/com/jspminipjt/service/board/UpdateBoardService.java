@@ -47,13 +47,14 @@ public class UpdateBoardService implements BoardService {
 
 		int result = -1;
 		File saveFileDir = new File(realPath);
-		String boardNo = request.getParameter("boardNo");
-		String writer = request.getParameter("writer");
-		String title = request.getParameter("title");
-		String content = request.getParameter("content");
+		String boardNo = "";
+		String writer = "";
+		String title = "";
+		String content = "";
+		String existFile = "";
+		String fileDelete = "";
+		System.out.println(existFile + " " + boardNo + " " + title);
 		String encoding = "utf-8";
-		String fileDelete = request.getParameter("fileDelete");
-		System.out.println(boardNo + " " + title);
 		// 파일이 저장될 공간의 경로, 사이즈 등의 환경설정 정보를 가지고 있는 객체
 		DiskFileItemFactory diskFactory = new DiskFileItemFactory(MEMORY_THRESHOLD, saveFileDir);
 		
@@ -61,25 +62,6 @@ public class UpdateBoardService implements BoardService {
 		ServletFileUpload sfu = new ServletFileUpload(diskFactory);
 		// 게시판 등록 진행 후 사진 삭제
 		// 사진을 삭제 할 경우
-		if (fileDelete != null) {
-			try {
-				dto = new BoardDto(Integer.parseInt(boardNo), writer, title, content);
-				System.out.println(dto.toString());
-				result = dao.updateBoardTransactionDeleteFile(dto);
-				if (result == 1) {
-					System.out.println("글쓰기 성공!!");
-					bf.setRedirect(true);
-					bf.setWhereToGo(request.getContextPath() +"/board/viewBoard.bo?boardNo=" + dto.getBoardNo());
-				}
-			} catch (NamingException | SQLException e) {
-				request.setAttribute("ErrorMsg", e.getMessage());
-				request.setAttribute("ErrorStack", e.getStackTrace());
-				request.getRequestDispatcher("../commonError.jsp").forward(request, response);
-				e.printStackTrace();
-			}
-			return bf;
-		}
-
 		try {
 			List<FileItem> list = sfu.parseRequest(request);
 			for (FileItem file : list) {
@@ -88,17 +70,24 @@ public class UpdateBoardService implements BoardService {
 				if (file.isFormField()) {
 					if (file.getFieldName().equals("boardNo")) {
 						boardNo = file.getString(encoding);
+					} else if (file.getFieldName().equals("writer")) {
+						writer = file.getString(encoding);
 					} else if (file.getFieldName().equals("title")) {
 						title = file.getString(encoding);
 					} else if (file.getFieldName().equals("content")) {
 						content = file.getString(encoding);
+					} else if (file.getFieldName().equals("fileDelete")) {
+						fileDelete = file.getString(encoding);
+					} else if (file.getFieldName().equals("existFile")) {
+						existFile = file.getString(encoding);
 					}
+
 				} else if (!file.isFormField() && file.getName() != ""){
 					// 업로드된 파일인 경우
   //					// 파일이름 중복 제거 =>  파일명 (순서번호) + 확장자
 					List<UploadFileVo> voList = dao.selectAllFile();
 					ufDto = getNewFileNameWithSerial(file, voList);
-					
+					System.out.println(voList.toString());
 					// 파일을 하드디스크에 저장
 					File fileToSave = null;
 					fileToSave = new File(realPath + File.separator + ufDto.getNewFileName());
@@ -113,7 +102,7 @@ public class UpdateBoardService implements BoardService {
 						e.printStackTrace();
 					}
 				}
-			} 
+			}
 			
 		} catch (FileUploadException | SQLException | NamingException e) {
 			request.setAttribute("ErrorMsg", e.getMessage());
@@ -124,24 +113,40 @@ public class UpdateBoardService implements BoardService {
 		
 		// ============= 게시판 수정 진행 =====================
 		content = content.replaceAll("\r\n", "<br>");
-		
+		int deleteCnt = -1;
 		dto = new BoardDto(Integer.parseInt(boardNo), title, content);
-		System.out.println(dto.toString());
-		try { // 업로드된 파일이 있는 경우
+		System.out.println(dto.toString() + "____" + existFile + "____" + fileDelete);
+		// 업로드된 파일이 있는 경우
+		// 1) 기존 파일 변경 => 기존 파일 삭제
+		// 2) 새롭게 파일 추가
+		try { 
 			if (ufDto != null) {
 				ufDto.setNewFileName("board_uploads/" + ufDto.getNewFileName());
 				ufDto.setBoardNo(dto.getBoardNo());
 				System.out.println("Test : " + ufDto.toString());
-				result = dao.updateBoardTransactionWithFile(dto, ufDto);
+				result = dao.updateBoardTransactionWithFile(dto, ufDto, existFile);
 				System.out.println(result + " => 결과 with 파일");
-			} else { // 업로드된 파일이 없는 경우
+				
+				if (result == 1 && !existFile.equals("")) {
+					String withoutPath = existFile.substring("board_uploads/".length());
+					File deleteFile = new File (realPath + File.separator + withoutPath);
+					deleteFile.delete(); // 파일 삭제
+				} 
+				
+			// 업로드된 파일이 없는 경우
+			// 1) 원래 없는 경우
+			// 2) 삭제하고자 하는 경우 == 기존 파일이 있는 경우
+			} else { 
+
 				result = dao.updateBoardTransactionWithoutFile(dto);
 				System.out.println(result + " => 결과 without 파일");
+				if (result == 1 && !existFile.equals("") && fileDelete.equals("delete")) {
+					System.out.println("여기는 exixstFile 들어오나?" + existFile);
+					deleteCnt = dao.updateBoardTransactionDeleteFile(dto);
+				} 
 			}
-			if (result == 1) {
+			if (deleteCnt == 1) {
 				System.out.println("글쓰기 성공!!");
-				bf.setRedirect(true);
-				bf.setWhereToGo(request.getContextPath() +"/board/viewBoard.bo?boardNo=" + dto.getBoardNo());
 			}
 			
 		} catch (NamingException | SQLException e) {
@@ -174,11 +179,12 @@ public class UpdateBoardService implements BoardService {
 		String newFileName = "";
 		String originalFileName = "";
 		String ext = "";
-		int cnt = 0;
+		int cnt = 1;
 		for (UploadFileVo vo : voList) {
 			if (file.getName().equals(vo.getOriginalFilename())) {
-				++cnt;
+				cnt++;
 			}
+			System.out.println("카운트가 안되는지 확인 해보기 : " + cnt);
 			if (file.getSize() > 0) {
 				if (!file.getName().equals(vo.getOriginalFilename())) {
 					ext = file.getName().substring(file.getName().lastIndexOf("."));
@@ -195,7 +201,7 @@ public class UpdateBoardService implements BoardService {
 		}
 
 		ufDto = new UploadedFileDto(originalFileName, ext, newFileName, file.getSize());
-
+		System.out.println("이름이 바뀌는 것을 보겠습니다! : " + ufDto.toString());
 		return ufDto;
 	}
 	
@@ -232,3 +238,29 @@ public class UpdateBoardService implements BoardService {
 		return result;
 	}
 }
+
+
+
+
+//if (existFile != null) {
+//	if (fileDelete != null) {
+//		try {
+//			dto = new BoardDto(Integer.parseInt(boardNo), writer, title, content);
+//			System.out.println(dto.toString());
+//			result = dao.updateBoardTransactionDeleteFile(dto);
+//			if (result == 1) {
+//				System.out.println("글쓰기 성공!!");
+//				String withoutPath = existFile.substring("board_uploads/".length());
+//				File deleteFile = new File (realPath + File.separator + withoutPath);
+//				deleteFile.delete(); // 파일 삭제
+//				}
+//		} catch (NamingException | SQLException e) {
+//			request.setAttribute("ErrorMsg", e.getMessage());
+//			request.setAttribute("ErrorStack", e.getStackTrace());
+//			request.getRequestDispatcher("../commonError.jsp").forward(request, response);
+//			e.printStackTrace();
+//		}
+//	} else {
+//		
+//	}
+//}

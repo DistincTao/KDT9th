@@ -105,13 +105,16 @@ public class RegisterMemberService implements MemberService {
 					
 					
 					// 파일 하드디스크에 저장
-					File fileToSave;
+					File fileToSave = null;
 
 					fileToSave = new File(realPath + File.separator + uploadedFile.getNewFileName());
 
 					try {
 						item.write(fileToSave);
 					} catch (Exception e) {
+						request.setAttribute("ErrorMsg", e.getMessage());
+						request.setAttribute("ErrorStack", e.getStackTrace());
+						request.getRequestDispatcher("../commonError.jsp").forward(request, response);
 						e.printStackTrace();
 					} // 파일 하드디스크에 저장
 				}
@@ -149,7 +152,11 @@ public class RegisterMemberService implements MemberService {
 			}
 		} catch (SQLException | NamingException e) {
 			// DB에 저장할 때 나오는 예외
+			request.setAttribute("ErrorMsg", e.getMessage());
+			request.setAttribute("ErrorStack", e.getStackTrace());
+			request.getRequestDispatcher("../commonError.jsp").forward(request, response);
 			e.printStackTrace();
+			
 			// 업로드된 파일이 있다면 삭제해야 함
 			String withoutPath = uploadedFile.getNewFileName().substring("memberImages/".length());
 			if (uploadedFile != null) {

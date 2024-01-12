@@ -29,4 +29,6 @@ public class BoardDaoSql {
 	public static final String INSERT_REPLY = "INSERT INTO board (writer, title, content, ref, step, ref_order) VALUES (?, ?, ?, ?, ?, ?)";
 	public static final String UPDATE_REF_ORDER = "UPDATE board SET ref_order = ref_order + 1 WHERE ref = ? AND ref_order > ?";
 	public static final String DELETE_UPLOADEDFILE = "DELETE FROM uploadedfile WHERE board_no =?";
+	public static final String SELECT_TOTALPOST = "SELECT count(*) AS total_post FROM board";
+	public static final String SELECT_ALL_BOARD_BY_PAGING = "SELECT * FROM board ORDER BY ref DESC, ref_order LIMIT ? , ?";
 }
