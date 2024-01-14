@@ -20,4 +20,11 @@ public class MemberDaoSql {
 	public static final String SELECT_USER_POINTLOG = "SELECT * FROM pointlog WHERE user_id = ? LIMIT ? , ?";
 	public static final String SELECT_LOGIN_USER_INFO = "SELECT m.*, u.new_filename FROM member m, uploadedfile u WHERE m.user_img = u.file_id AND m.user_id = ?";
 	
+	public static final String UPDATE_USER_IMAGE = "UPDATE uploadedfile SET original_filename = ?, ext = ?, new_filename = ?, file_size = ?, base64String = ? WHERE file_id = ?";
+	public static final String UPDATE_USER_PWD = "UPDATE member SET user_pwd = sha1(md5(?)) WHERE user_id = ?";
+	public static final String UPDATE_USER_EMAIL = "UPDATE member SET user_email = ? WHERE user_id = ?";
+
+	public static final String DELETE_UPLOADEDFILE = "DELETE FROM uploadedfile WHERE file_id =?";
+	public static final String SELECT_TOTALPOST = "SELECT count(*) AS total_post FROM pointlog WHERE user_id = ?";
+	public static final String SELECT_LAST_LOGIN = "SELECT action_date AS 'last_login' FROM pointlog WHERE point_type = 'login' AND user_id = ? ORDER BY pointlog_no DESC LIMIT 1";
 }

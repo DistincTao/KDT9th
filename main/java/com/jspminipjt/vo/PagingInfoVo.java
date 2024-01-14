@@ -2,7 +2,7 @@ package com.jspminipjt.vo;
 
 public class PagingInfoVo {
 	private int totalPostCnt; // 전체 게시판 글의 갯수
-	private int pagePostCnt = 5; // 한페이지에 보여줄 글의 갯수
+	private int pagePostCnt = 10; // 한페이지에 보여줄 글의 갯수
 	private int totalPageCnt; // 총페이지 수
 	private int startRowIndex; // 보여주기 시작할 글의 row index 번호
 	private int pageNo; // 유저가 클릭한 페이지의 번호

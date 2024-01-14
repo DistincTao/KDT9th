@@ -44,8 +44,12 @@
                             <p class="fs-7 text-uppercase text-primary">작성자 : ${requestScope.board.writer }</p>
                             <p class="fs-7 text-uppercase ">작성일 : ${requestScope.board.postDate }</p>
                             <div class="counts">
-	                            <div class="fs-7 text-uppercase"><img src="../img/book.png" style="width : 24px; height : 24px;"><span class="badge bg-primary">${requestScope.board.readCount }</span></div>
-	                            <div class="fs-7 text-uppercase likeCnt"><i class="fa-regular fa-heart" style="width : 24px; height : 24px; color : red;" id="likeCnt"></i><span class="badge bg-primary">${requestScope.board.likeCount }</span></div>
+	                            <div class="fs-7 text-uppercase">
+	                            	<img src="../img/book.png" style="width : 24px; height : 24px;"><span class="badge bg-primary">${requestScope.board.readCount }</span>
+                            	</div>
+	                            <div class="fs-7 text-uppercase likeCnt">
+	                            	<i class="fa-regular fa-heart" style="width : 24px; height : 24px; color : red;" id="likeCnt"></i><span class="badge bg-primary">${requestScope.board.likeCount }</span>
+                            	</div>
                             </div>
                             <div class="mb-3 fs-6">${requestScope.board.content }</div>
                         </div>

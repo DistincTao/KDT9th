@@ -1,7 +1,9 @@
 package com.jspminipjt.dao.member;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -21,7 +23,7 @@ public interface MemberDao {
 	// ===== 회원 가입 진행 Transaction ====== (C)
 	// 파일이 있을 때 회원 가입 진행 (1)
 	public abstract int registerMemberWithFile(UploadedFileDto uf, MemberDto dto, String pointType, int eachPoint) throws SQLException, NamingException;
-	
+		
 	// 파일이 없을 때 회원 가입 진행 (2)
 	public abstract int registerMemberWithoutFile(MemberDto dto, String pointType, int eachPoint) throws SQLException, NamingException;
 	
@@ -42,22 +44,26 @@ public interface MemberDao {
 	// 해당 아이디 맴버 정보 가져오기ㅏ
 	public abstract MemberVo getMemberInfo(String userId)throws SQLException, NamingException;
 	// 해당 맴버의 포인트 기록 가져오기
-	public abstract List<MemberPointVo> getMemberPointInfo(String userId, PagingInfoVo paging)throws SQLException, NamingException;
-
+	public abstract List<MemberPointVo> getMemberPointInfo(String userId, PagingInfoVo paging) throws SQLException, NamingException;
+	// 개인정보 이미지 업데이트
+	public abstract int updateMyPageFile(UploadedFileDto ufDto, String userImg) throws SQLException, NamingException;
+	// 비밀번호 변경
+	public abstract int updateUserPwd(String userPwd, String userId) throws SQLException, NamingException;
+	// 이메일 정보 변경
+	public abstract int updateUserEmail(String userEmail, String userId) throws SQLException, NamingException;
+	// 저장된 파일 삭제
+	public abstract int deleteUploadedFile(int userImg, Connection con) throws NamingException, SQLException;
+	// 페이징
+	public abstract int getTotalPostCnt(String userId) throws NamingException, SQLException;
+	// 해당 아이디의 마지막 로그인 기록 가져오기
+	public abstract Date getLastLogin(String userId) throws NamingException, SQLException;
 	
 	
 	// 전체 회원 정보 조회 (R)
 	// 아이디로 회원 정보 조회 (R)
 	// 회원 정보 수정 (U)
 	// 회원 탈퇴 (D)
-	
-	// 게시판 쓰기 (C)
-	// 게시판 조회 (R)
-	// 작성자로 게시판 조회 (R)
-	// 작성 기간으로 게시판 조회 (R)
-	// 게시판 내용 수정 (U)
-	// 게시판 삭제 (D)
-	
+
 	
 	
 	

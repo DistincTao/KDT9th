@@ -41,7 +41,7 @@ public class MyPageService implements MemberService {
 		
 		PagingInfoVo paging = null;
 		try {
-			paging = pagingProcess(pageNo);
+			paging = pagingProcess(pageNo, userId);
 			System.out.println(paging.toString());
 		} catch (NamingException | SQLException e) {
 			request.setAttribute("ErrorMsg", e.getMessage());
@@ -54,9 +54,14 @@ public class MyPageService implements MemberService {
 			vo = dao.getMemberInfo(userId);
 			list = dao.getMemberPointInfo(userId, paging);
 			
-			request.setAttribute("memberInfo", vo);
-			request.setAttribute("pointlog", list);
-			request.setAttribute("pageInfo", paging);
+			if (list.size() == 0) {
+				request.setAttribute("boardList", null);
+			} else {
+				request.setAttribute("memberInfo", vo);
+				request.setAttribute("pointlog", list);
+				request.setAttribute("pageInfo", paging);
+			}
+			
 			
 			request.getRequestDispatcher("mypage.jsp").forward(request, response);
 			
@@ -71,13 +76,14 @@ public class MyPageService implements MemberService {
  		return null;
 	}
 	
-	private PagingInfoVo pagingProcess(int pageNo) throws NamingException, SQLException {
+	private PagingInfoVo pagingProcess(int pageNo, String userId) throws NamingException, SQLException {
 		PagingInfoVo vo = new PagingInfoVo();
-		BoardDao dao = BoardDaoCRUD.getInstance();
+		MemberDao dao = MemberDaoCRUD.getInstance();
 		
+		vo.setPagePostCnt(15);
 		vo.setPageNo(pageNo);
 		// 전제 게시글
-		vo.setTotalPostCnt(dao.getTotalPostCnt());
+		vo.setTotalPostCnt(dao.getTotalPostCnt(userId));
 //		vo.setTotalPageCnt();
 		// 총 페이지수
 		vo.setTotalPageCnt(vo.getTotalPostCnt(), vo.getPagePostCnt());
