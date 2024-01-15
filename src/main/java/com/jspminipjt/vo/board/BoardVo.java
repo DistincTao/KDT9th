@@ -14,6 +14,7 @@ public class BoardVo {
 	private int step;
 	private int refOrder;
 	private String isDelete;
+	private String newFilename;
 	
 	
 	public BoardVo() {
@@ -34,6 +35,23 @@ public class BoardVo {
 		this.step = step;
 		this.refOrder = refOrder;
 		this.isDelete = isDelete;
+	}
+	
+	public BoardVo(int boardNo, String writer, String title, Timestamp postDate, String content, int readCount,
+			int likeCount, int ref, int step, int refOrder, String isDelete, String newFileName) {
+		super();
+		this.boardNo = boardNo;
+		this.writer = writer;
+		this.title = title;
+		this.postDate = postDate;
+		this.content = content;
+		this.readCount = readCount;
+		this.likeCount = likeCount;
+		this.ref = ref;
+		this.step = step;
+		this.refOrder = refOrder;
+		this.isDelete = isDelete;
+		this.newFilename = newFileName;
 	}
 	public int getBoardNo() {
 		return boardNo;
@@ -71,12 +89,15 @@ public class BoardVo {
 		return step;
 	}
 	
-	public int getRef_order() {
-		return refOrder;
-	}
-	
 	public String getIsDelete() {
 		return isDelete;
+	}
+	
+	public int getRefOrder() {
+		return refOrder;
+	}
+	public String getNewFilename() {
+		return newFilename;
 	}
 	@Override
 	public String toString() {

@@ -6,3 +6,8 @@
 	width :30px;
 	height: 30px;
 }
+
+#goHome {
+  color : white;
+  text-decoration: none;
+}

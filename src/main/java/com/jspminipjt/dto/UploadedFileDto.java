@@ -86,8 +86,10 @@ public class UploadedFileDto {
 
 	@Override
 	public String toString() {
-		return "UploadedFile [originalFileName=" + originalFileName + ", ext=" + ext + ", newFileName=" + newFileName
-				+ ", fileSize=" + fileSize + "]";
+		return "UploadedFileDto [originalFileName=" + originalFileName + ", ext=" + ext + ", newFileName=" + newFileName
+				+ ", fileSize=" + fileSize + ", boardNo=" + boardNo + ", base64String=" + base64String + "]";
 	}
+
+
 	
 }

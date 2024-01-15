@@ -20,43 +20,95 @@
 </head>
 <body>
 <div class="p-5 bg-primary text-white text-center header">
-  <h1>JSP MINI PROJECT</h1>
+  <h1><a href="${contextPath }/index.jsp" id="goHome" style="color : white; text-decoration: none;">JSP MINI PROJECT</a></h1>
   <p>2024 Jan Version</p> 
 </div>
-
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <div class="container-fluid">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link active" href="${contextPath }/index.jsp">distinctao</a>
+      <c:choose>
+      <c:when test="${pageContext.request.requestURI == '/JSPMiniProject/index.jsp' }">
+        <a class="nav-link active" href="${contextPath }/index.jsp">Distinctao</a>
+      </c:when>
+      <c:otherwise>
+        <a class="nav-link" href="${contextPath }/index.jsp">Distinctao</a>
+      </c:otherwise>
+      </c:choose>
       </li>
+
       <li class="nav-item">
+	  <c:choose>
+      <c:when test="${pageContext.request.requestURI == '/JSPMiniProject/board/listAll.jsp' }">
+        <a class="nav-link active" href="${contextPath }/board/listAll.bo">BOARD</a>
+      </c:when>
+      <c:otherwise>
         <a class="nav-link" href="${contextPath }/board/listAll.bo">BOARD</a>
+      </c:otherwise>
+      </c:choose> 
       </li>
 		<c:choose>
 			<c:when test="${sessionScope.login == null }" >
 		        <li class="nav-item">
+		        <c:choose>
+                <c:when test="${pageContext.request.requestURI == '/JSPMiniProject/member/register.jsp' }">
+		            <a class="nav-link active" href="${contextPath }/member/register.jsp">SIGN IN</a>
+                </c:when>
+                <c:otherwise>
 		            <a class="nav-link" href="${contextPath }/member/register.jsp">SIGN IN</a>
+                </c:otherwise>
+			    </c:choose>
 		        </li>
 		        <li class="nav-item">
+		        <c:choose>
+				<c:when test="${pageContext.request.requestURI == '/JSPMiniProject/member/login.jsp' }">
+		            <a class="nav-link active" href="${contextPath }/member/login.jsp">LOGIN</a>
+				</c:when>
+				<c:otherwise>
 		            <a class="nav-link" href="${contextPath }/member/login.jsp">LOGIN</a>
-		     	    </li>
+				</c:otherwise>
+				</c:choose>
+		        
+		     	</li>
 			</c:when>
 		  	<c:otherwise>
 	     	    <li class="nav-item">
+	     	    <c:choose>
+	     	    <c:when test="${pageContext.request.requestURI == '/JSPMiniProject/member/mypage.jsp' }">
+	     	    	 <a class="nav-link active" href="${contextPath }/member/myPage.mem?userId=${sessionScope.login.userId}"> ${sessionScope.login.userId}
+	     	    	 	<img src="${contextPath }/${sessionScope.login.memberImg }" id="userImg">
+	     	    	 </a>
+	     	    </c:when>
+	     	    <c:otherwise>
 	     	    	 <a class="nav-link" href="${contextPath }/member/myPage.mem?userId=${sessionScope.login.userId}"> ${sessionScope.login.userId}
 	     	    	 	<img src="${contextPath }/${sessionScope.login.memberImg }" id="userImg">
 	     	    	 </a>
+	     	    </c:otherwise>
+	     	    </c:choose>
 
 	     	    </li>
 		        <li class="nav-item">
+		            <c:choose>
+		            <c:when test="${pageContext.request.requestURI == '/JSPMiniProject/member/logout.jsp' }">
+		            <a class="nav-link active" href="${contextPath }/member/logout.mem">LOGOUT</a>
+		            </c:when>
+		            <c:otherwise>
 		            <a class="nav-link" href="${contextPath }/member/logout.mem">LOGOUT</a>
+		            </c:otherwise>
+		            </c:choose>
 	     	    </li>  
 		  	</c:otherwise>
 		</c:choose>
   		<c:if test="${sessionScope.login.isAdmin == 'Y' }">
 			<li class = "nav-item">
+				<c:choose>
+				<c:when test="${pageContext.request.requestURI == '/JSPMiniProject/admin/admin.jsp' }">
+       			<a class="nav-link active" href="${contextPath }/admin/admin.jsp">Admin Page</a>
+				</c:when>
+				<c:otherwise>
        			<a class="nav-link" href="${contextPath }/admin/admin.jsp">Admin Page</a>
+				</c:otherwise>
+				</c:choose>
        		</li>
 		</c:if>
     </ul>

@@ -1,6 +1,7 @@
 package com.jspminipjt.dao.member;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +13,7 @@ import javax.naming.NamingException;
 import com.jspminipjt.dao.DBConnection;
 import com.jspminipjt.dto.UploadedFileDto;
 import com.jspminipjt.dto.member.MemberDto;
+import com.jspminipjt.vo.PagingInfoVo;
 import com.jspminipjt.vo.UploadFileVo;
 import com.jspminipjt.vo.member.MemberPointVo;
 import com.jspminipjt.vo.member.MemberVo;
@@ -354,7 +356,7 @@ public class MemberDaoCRUD implements MemberDao {
 	}
 
 	@Override
-	public List<MemberPointVo> getMemberPointInfo(String userId) throws SQLException, NamingException {
+	public List<MemberPointVo> getMemberPointInfo(String userId, PagingInfoVo paging) throws SQLException, NamingException {
 		List<MemberPointVo> volist = new ArrayList<>();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -364,6 +366,8 @@ public class MemberDaoCRUD implements MemberDao {
 		
 		pstmt = con.prepareStatement(query);
 		pstmt.setString(1, userId);
+		pstmt.setInt(2, paging.getStartRowIndex());
+		pstmt.setInt(3, paging.getPagePostCnt());
 		
 		rs = pstmt.executeQuery();
 		
@@ -379,6 +383,124 @@ public class MemberDaoCRUD implements MemberDao {
 		DBConnection.getInstance().dbClose(rs, pstmt, con);
 		return volist;
 	}
+	
+	@Override
+	public int updateMyPageFile(UploadedFileDto ufDto, String userImg) throws SQLException, NamingException {
+		int result = -1;
+		
+		Connection con = DBConnection.getInstance().dbConnect();
+		PreparedStatement pstmt = null;
+		int imageNo = Integer.parseInt(userImg);
+		String query = MemberDaoSql.UPDATE_USER_IMAGE;
+		pstmt = con.prepareStatement(query);
+		
+		pstmt.setString(1, ufDto.getOriginalFileName());
+		pstmt.setString(2, ufDto.getExt());
+		pstmt.setString(3, ufDto.getNewFileName());
+		pstmt.setLong(4, ufDto.getFileSize());
+		pstmt.setString(5, ufDto.getBase64String());
+		pstmt.setInt(6, imageNo);
+		
+		result = pstmt.executeUpdate();
+		
+		DBConnection.getInstance().dbClose(pstmt, con);
+		return result;
+	}
 
+	@Override
+	public int updateUserPwd(String userPwd, String userId) throws SQLException, NamingException {
+		int result = -1;
+		Connection con = DBConnection.getInstance().dbConnect();
+		PreparedStatement pstmt = null;
 
+		
+		String query = MemberDaoSql.UPDATE_USER_PWD;
+		pstmt = con.prepareStatement(query);
+		pstmt.setString(1, userPwd);
+		pstmt.setString(2, userId);
+		
+		result = pstmt.executeUpdate();
+		
+		DBConnection.getInstance().dbClose(pstmt, con);
+		return result;
+	}
+
+	@Override
+	public int updateUserEmail(String userEmail, String userId) throws SQLException, NamingException {
+		int result = -1;
+		Connection con = DBConnection.getInstance().dbConnect();
+		PreparedStatement pstmt = null;
+		
+		String query = MemberDaoSql.UPDATE_USER_EMAIL;
+		
+		pstmt = con.prepareStatement(query);
+		pstmt.setString(1, userEmail);
+		pstmt.setString(2, userId);
+		
+		result = pstmt.executeUpdate();
+		
+		DBConnection.getInstance().dbClose(pstmt, con);
+		return result;
+	}
+
+	@Override
+	public int deleteUploadedFile(int userImg, Connection con) throws NamingException, SQLException {
+		System.out.println(userImg + "번 게시판 파일 삭제 진행");
+		
+		int result = -1;
+		PreparedStatement pstmt = null;
+		String query = MemberDaoSql.DELETE_UPLOADEDFILE;
+		
+		pstmt = con.prepareStatement(query);
+		pstmt.setInt(1, userImg);
+		
+		result = pstmt.executeUpdate();
+		
+		DBConnection.getInstance().dbClose(pstmt);
+		return result;
+		
+	}
+
+	@Override
+	public int getTotalPostCnt(String userId) throws NamingException, SQLException {
+		int totalPostCnt = 0;
+		Connection con = DBConnection.getInstance().dbConnect();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		String query = MemberDaoSql.SELECT_TOTALPOST;
+
+		pstmt = con.prepareStatement(query);
+		pstmt.setString(1, userId );
+		rs = pstmt.executeQuery();
+
+		while (rs.next()) {
+			totalPostCnt = rs.getInt("total_post");
+		}
+
+		DBConnection.getInstance().dbClose(rs, pstmt, con);
+		return totalPostCnt;
+	}
+
+	@Override
+	public Date getLastLogin(String userId) throws NamingException, SQLException {
+		Date loginDate = null;
+		Connection con = DBConnection.getInstance().dbConnect();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		String query = MemberDaoSql.SELECT_LAST_LOGIN;
+
+		pstmt = con.prepareStatement(query);
+		pstmt.setString(1, userId );
+		rs = pstmt.executeQuery();
+
+		while (rs.next()) {
+			loginDate = rs.getDate("last_login");
+		}
+
+		DBConnection.getInstance().dbClose(rs, pstmt, con);
+		return loginDate;
+	}
+	
 }

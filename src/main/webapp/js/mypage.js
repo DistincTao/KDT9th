@@ -18,7 +18,7 @@ $(function() {
 		validEmail();
 	})
 	
-	$("#changEmailBtn").click (function (){
+	$("#changeEmailBtn").click (function (){
 		$(".changeEmail").show();	
 	});
 	
@@ -81,9 +81,23 @@ $(function() {
 		});
 	});
 
+	$("#changeImg").click(function(){
+		$(".changeImg").show();
+	});
+	
+	$(".fileClose").click(function(){
+		$(".changeImg").hide();
+	});
+	
+//	$("#pointList").click(function(){
+//		$(".pointList").show();
+//		
+//	})
+
 	$(".modalClose").click (function() {
 			$(".changePwd").hide();
 			$(".changeEmail").hide();
+			$(".pointList").hide();
 	});
 
 

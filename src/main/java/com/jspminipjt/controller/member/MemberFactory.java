@@ -8,6 +8,7 @@ import com.jspminipjt.service.member.LogoutMemberService;
 import com.jspminipjt.service.member.MyPageService;
 import com.jspminipjt.service.member.RegisterMemberService;
 import com.jspminipjt.service.member.SendMailService;
+import com.jspminipjt.service.member.UpdateMyInfoService;
 
 public class MemberFactory {
 	private static MemberFactory instance;
@@ -62,7 +63,9 @@ public class MemberFactory {
 			result = new LogoutMemberService();
 		} else if (command.equals("/member/myPage.mem")) {
 			result = new MyPageService();
-		}
+		} else if (command.equals("/member/updateData.mem")){
+			result = new UpdateMyInfoService();
+		} 
 		
 		return result;
 	}
